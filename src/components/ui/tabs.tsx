@@ -33,7 +33,7 @@ export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>
       type="button"
       className={cn(
         'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded px-3 py-1 text-xs font-mono transition-all duration-150 cursor-pointer',
-        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-400',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-400',
         active
           ? 'bg-[#1e293b] text-white font-medium shadow-sm'
           : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40',
@@ -48,7 +48,7 @@ export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>
           className={cn(
             'text-[9px] px-1 py-0.2 rounded font-mono uppercase tracking-wider',
             active
-              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              ? 'bg-slate-700/60 text-slate-200 border border-slate-600/60'
               : 'bg-slate-800 text-slate-400',
           )}
         >

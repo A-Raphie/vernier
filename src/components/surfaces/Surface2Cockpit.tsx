@@ -55,6 +55,15 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
   const [actionConfirmed, setActionConfirmed] = useState(false);
   const [receiptCopied, setReceiptCopied] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [targetCopied, setTargetCopied] = useState(false);
+
+  const handleCopyTarget = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(activeScenario.intent.targetContract);
+      setTargetCopied(true);
+      setTimeout(() => setTargetCopied(false), 2000);
+    }
+  };
 
   const isCritical = activeScenario.riskLevel === 'CRITICAL';
   const isHigh = activeScenario.riskLevel === 'HIGH';
@@ -230,7 +239,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                   </p>
                 </div>
 
-                <div className="flex items-center gap-6 shrink-0 self-start md:self-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800/80 w-full md:w-auto justify-between md:justify-end">
+                <div className="flex items-center gap-6 shrink-0 self-start md:self-auto p-3 sm:px-5 sm:py-3 rounded-xl bg-slate-900/40 border border-slate-800/80 w-full md:w-auto justify-between md:justify-end">
                   <div className="text-left md:text-right">
                     <div className="text-2xl sm:text-3xl font-semibold text-white tracking-tight font-mono tabular-nums">
                       {isDanger ? '$142,000.00' : '$0.00'}
@@ -252,15 +261,32 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             <div className="vn-grid-2" style={{ gap: 16 }}>
               {/* Left Card: Promised by Website */}
               <div className="vn-panel" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 10, borderRadius: 12 }}>
-                <span className="label">Promised by Website</span>
+                <div className="flex items-center justify-between">
+                  <span className="label">Promised by Website</span>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-slate-900/60 border border-slate-800 px-2 py-0.5 rounded">
+                    Declared Intent
+                  </span>
+                </div>
                 <div className="value-lg text-white">{explainer.scamPromise}</div>
                 <blockquote className="excerpt">“{explainer.scamSubtitle}”</blockquote>
                 
-                <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12, overflow: 'hidden' }}>
-                  <span style={{ color: 'var(--ink-muted)' }}>Target:</span>
-                  <code style={{ fontFamily: 'var(--mono)', color: 'var(--ink-secondary)', wordBreak: 'break-all', fontSize: 11 }}>
-                    {activeScenario.intent.targetContract}
-                  </code>
+                <div className="vn-row-between" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12 }}>
+                  <div className="flex items-center gap-2 overflow-hidden" style={{ minWidth: 0 }}>
+                    <span style={{ color: 'var(--ink-muted)' }} className="shrink-0">Target:</span>
+                    <code style={{ fontFamily: 'var(--mono)', color: 'var(--ink-secondary)', fontSize: 11 }} className="truncate">
+                      {activeScenario.intent.targetContract}
+                    </code>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyTarget}
+                    className="h-6 px-2 text-[11px] text-slate-400 hover:text-white shrink-0"
+                    title="Copy contract address"
+                  >
+                    {targetCopied ? <Check className="size-3 text-emerald-400 mr-1" /> : <Copy className="size-3 text-slate-400 mr-1" />}
+                    <span>{targetCopied ? 'Copied' : 'Copy'}</span>
+                  </Button>
                 </div>
               </div>
 
@@ -281,10 +307,17 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                   {explainer.actualAction}
                 </p>
 
-                <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12 }}>
+                <div className="vn-row-between" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12, flexWrap: 'wrap', gap: 6 }}>
                   <span style={{ color: 'var(--ink-muted)' }}>Policy:</span>
-                  <span style={{ color: isDanger ? '#fca5a5' : 'var(--ink-secondary)', fontWeight: 500 }}>
-                    {activeScenario.threat.remediation}
+                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-mono ${
+                    isDanger ? 'bg-rose-950/40 border border-rose-800/40 text-rose-300' : 'bg-slate-900 border border-slate-800 text-slate-300'
+                  }`}>
+                    {isDanger ? (
+                      <ShieldAlert className="size-3 shrink-0 text-rose-400" />
+                    ) : (
+                      <ShieldCheck className="size-3 shrink-0 text-emerald-400" />
+                    )}
+                    <span>{activeScenario.threat.remediation}</span>
                   </span>
                 </div>
               </div>
@@ -300,22 +333,34 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 {activeScenario.threat.vectors.length > 0 ? (
                   activeScenario.threat.vectors.map((vec, i) => (
                     <div key={i} className="gate">
-                      <span className="gate-name">{vec}</span>
+                      <div className="flex items-center gap-2">
+                        <XCircle className="size-3.5 text-rose-400 shrink-0" />
+                        <span className="gate-name">{vec}</span>
+                      </div>
                       <span className="tag tag-fail">FAIL</span>
                     </div>
                   ))
                 ) : (
                   <>
                     <div className="gate">
-                      <span className="gate-name">Price Slippage Boundary Conformance (0.50% max)</span>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                        <span className="gate-name">Price Slippage Boundary Conformance (0.50% max)</span>
+                      </div>
                       <span className="tag tag-pass">PASS</span>
                     </div>
                     <div className="gate">
-                      <span className="gate-name">Storage Delta State Shift Containment</span>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                        <span className="gate-name">Storage Delta State Shift Containment</span>
+                      </div>
                       <span className="tag tag-pass">PASS</span>
                     </div>
                     <div className="gate">
-                      <span className="gate-name">Allowance Recipient Verification</span>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                        <span className="gate-name">Allowance Recipient Verification</span>
+                      </div>
                       <span className="tag tag-pass">PASS</span>
                     </div>
                   </>
@@ -326,20 +371,20 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             {/* 4. Secondary Rails: Blind Wallet Comparison + Auditor Mode Trigger */}
             <div className="vn-row-between" style={{ padding: '6px 0', flexWrap: 'wrap', gap: 10 }}>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={() => setBlindSignTestActive(!blindSignTestActive)}
-                className="text-slate-400 hover:text-slate-200 text-xs font-mono"
+                className={`text-xs font-mono border-slate-800 hover:border-slate-700 ${blindSignTestActive ? 'bg-slate-800 text-white' : 'text-slate-300 hover:text-white bg-slate-900/40'}`}
                 leftIcon={<Eye className="size-3.5 text-slate-400" />}
               >
-                {blindSignTestActive ? 'Hide MetaMask blind sign comparison' : 'Compare with MetaMask blind sign →'}
+                {blindSignTestActive ? 'Close MetaMask Blind Sign Comparison' : 'Compare with MetaMask Blind Sign →'}
               </Button>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setViewMode('auditor')}
-                className="text-xs font-mono border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white"
+                className="text-xs font-mono border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white bg-slate-900/40"
                 leftIcon={<Terminal className="size-3.5 text-slate-400" />}
               >
                 Open Auditor Caliper & Bytecode Trace →

@@ -56,8 +56,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
             active={activeTab === 'cockpit'}
             onClick={() => onTabChange('cockpit')}
           >
-            <span>Cockpit</span>
-            <span className="size-1.5 rounded-full bg-slate-400" />
+            Cockpit
           </TabsTrigger>
 
           <TabsTrigger
