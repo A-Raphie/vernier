@@ -90,7 +90,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
   const riskSegmentsFilled = Math.round((activeScenario.riskScore / 100) * 10);
 
   return (
-    <div style={{ padding: '20px 24px', background: 'var(--bg)', minHeight: 'calc(100vh - 3.5rem)' }}>
+    <div style={{ padding: '24px 28px', background: 'var(--bg)', minHeight: 'calc(100vh - 3.5rem)' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* ── COMMAND BAR ── */}

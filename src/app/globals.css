@@ -61,7 +61,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border);
   background: rgba(11, 15, 25, 0.7);
 }
@@ -73,11 +73,11 @@ body {
   text-transform: uppercase;
   color: var(--ink-secondary);
 }
-.vn-panel-body { padding: 14px; }
+.vn-panel-body { padding: 18px; }
 .vn-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
 
 /* ── stat tiles ── */
-.vn-stat { display: flex; flex-direction: column; gap: 2px; }
+.vn-stat { display: flex; flex-direction: column; gap: 3px; }
 .vn-stat-label {
   font-family: var(--mono);
   font-size: 10px;
@@ -88,9 +88,9 @@ body {
 }
 .vn-stat-value {
   font-family: var(--mono);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
 }
 .vn-stat-sub {
@@ -100,7 +100,7 @@ body {
 
 /* ── forensics diff sections ── */
 .vn-intent-block {
-  padding: 14px;
+  padding: 20px 20px 18px;
   border-bottom: 1px solid var(--border);
 }
 .vn-intent-label {
