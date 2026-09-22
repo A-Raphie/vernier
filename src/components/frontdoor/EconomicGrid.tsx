@@ -8,7 +8,7 @@ export const EconomicGrid: React.FC = () => {
     <section className="py-14 px-4 lg:px-8 border-b border-[#1e293b] bg-[#090d16]">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="text-center space-y-1">
-          <span className="font-mono text-xs uppercase tracking-widest text-amber-400">
+          <span className="font-mono text-xs uppercase tracking-widest text-slate-400">
             Economic Friction
           </span>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-100 font-sans">

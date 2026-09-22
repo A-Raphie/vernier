@@ -395,12 +395,12 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             {/* Auditor Header Banner with Return Button */}
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '10px 16px', borderRadius: 10, background: 'rgba(56, 189, 248, 0.08)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
+              padding: '10px 16px', borderRadius: 10, background: '#0e131f',
+              border: '1px solid var(--border)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Terminal size={14} style={{ color: 'var(--cyan)' }} />
-                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--cyan)', textTransform: 'uppercase' }}>
+                <Terminal size={14} style={{ color: 'var(--ink-secondary)' }} />
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase' }}>
                   Auditor Mode Active: Deep Bytecode & Storage Slot Metrology
                 </span>
               </div>
@@ -409,7 +409,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 size="sm"
                 onClick={() => setViewMode('simple')}
                 leftIcon={<ArrowLeft className="size-3.5" />}
-                className="font-mono text-xs"
+                className="font-mono text-xs border-slate-700 hover:border-slate-600"
               >
                 Return to Simple Verdict
               </Button>
@@ -423,13 +423,13 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               <div className="vn-panel">
                 <div className="vn-panel-header">
                   <div className="vn-row">
-                    <Sliders size={12} style={{ color: 'var(--amber)' }} />
+                    <Sliders size={12} style={{ color: 'var(--ink-muted)' }} />
                     <span className="vn-panel-title">Execution Scrubber</span>
                   </div>
                   <span className="num" style={{ fontSize: 11, color: 'var(--ink-muted)' }}>
                     Step <strong style={{ color: 'var(--ink)' }}>{safeStepIndex + 1}</strong> of <strong style={{ color: 'var(--ink)' }}>{totalSteps}</strong>
                     <span style={{ margin: '0 6px', color: 'var(--border-hover)' }}>·</span>
-                    Gas <strong style={{ color: 'var(--amber)' }}>{currentGas.toLocaleString()}</strong>
+                    Gas <strong style={{ color: 'var(--ink)' }}>{currentGas.toLocaleString()}</strong>
                   </span>
                 </div>
 

@@ -67,23 +67,23 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
           {/* Beat 5: Live Signature Card (Operable Preview Card) */}
           <div className="pt-6 max-w-2xl mx-auto text-left">
-            <Card className="p-5 space-y-4 shadow-xl">
+            <Card className="p-5 space-y-4 shadow-xl border-slate-800">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
-                  <span className="size-2 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="size-2 rounded-full bg-slate-400" />
                   <span className="font-semibold uppercase tracking-wider">LIVE SIGNATURE BENCHMARK</span>
                 </div>
 
                 {/* Scenario Toggle */}
-                <TabsList className="p-0.5">
+                <TabsList className="p-0.5 bg-black/40 border border-slate-800">
                   {SCENARIOS.map((s) => (
                     <TabsTrigger
                       key={s.id}
                       active={s.id === selectedScenarioId}
                       onClick={() => onSelectScenario(s.id)}
-                      className="px-2 py-0.5 text-[11px]"
+                      className={`px-2.5 py-1 text-[11px] font-mono ${s.id === selectedScenarioId ? '!bg-slate-800 !text-white' : '!text-slate-400'}`}
                     >
-                      {s.name.split(' ')[0]}
+                      {s.id === 'permit2-drain' ? 'Airdrop Phishing' : s.id === 'proxy-delegatecall-hijack' ? 'Implementation Hijack' : 'Uniswap Clean'}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -106,7 +106,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                 <div className="p-3.5 rounded border border-slate-800/80 bg-[#090d16] space-y-1.5">
                   <div className="text-[10px] text-slate-500 uppercase flex items-center justify-between">
                     <span>2. VERNIER FIREWALL VERDICT</span>
-                    <span className="text-[10px] text-cyan-400 font-mono">0.42ms</span>
+                    <span className="text-[10px] text-slate-400 font-mono">0.42ms</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <Badge variant={isCritical ? 'destructive' : isClean ? 'success' : 'warning'}>
@@ -126,13 +126,13 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 text-xs font-mono">
                 <div className="flex items-center gap-2">
                   {isClean ? (
-                    <span className="flex items-center gap-1.5 text-emerald-400 font-sans">
-                      <CheckCircle2 className="size-3.5" />
+                    <span className="flex items-center gap-1.5 text-slate-300 font-sans">
+                      <CheckCircle2 className="size-3.5 text-emerald-400" />
                       <span>Legitimate transaction · Safe to sign</span>
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 text-rose-400 font-sans">
-                      <ShieldAlert className="size-3.5" />
+                    <span className="flex items-center gap-1.5 text-slate-300 font-sans">
+                      <ShieldAlert className="size-3.5 text-rose-400" />
                       <span>Drainer halted: {activeScenario.plainEnglish?.assetsProtected || 'Assets protected'}</span>
                     </span>
                   )}
@@ -142,8 +142,8 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => onNavigateTab('cockpit')}
-                  className="text-amber-400 hover:text-amber-300 ml-auto"
-                  rightIcon={<ChevronRight className="size-3.5" />}
+                  className="text-slate-300 hover:text-white ml-auto"
+                  rightIcon={<ChevronRight className="size-3.5 text-slate-400" />}
                 >
                   SEE JUDGE WALKTHROUGH
                 </Button>
@@ -176,7 +176,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
       <section className="py-14 px-4 lg:px-8 border-b border-[#1e293b] bg-[#0c101c]">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="text-center space-y-2">
-            <span className="font-mono text-xs uppercase tracking-widest text-cyan-400 font-semibold">
+            <span className="font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold">
               Explain Like I&apos;m 5
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white font-sans">
@@ -189,7 +189,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
-              <div className="text-amber-400 font-mono text-xs font-bold">THE PROBLEM</div>
+              <div className="text-slate-400 font-mono text-xs font-semibold uppercase tracking-wider">THE PROBLEM</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Blind Signatures</h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 When you interact with a dApp, your wallet only displays cryptic gibberish like <code className="text-slate-300">0x095ea7b3</code>. 
@@ -198,7 +198,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
             </div>
 
             <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
-              <div className="text-cyan-400 font-mono text-xs font-bold">THE SOLUTION</div>
+              <div className="text-slate-400 font-mono text-xs font-semibold uppercase tracking-wider">THE SOLUTION</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">0.4ms Local Simulation</h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 Before your wallet shows the &ldquo;Confirm&rdquo; button, Vernier spins up an instantaneous private EVM inside your browser. 
@@ -207,7 +207,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
             </div>
 
             <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
-              <div className="text-emerald-400 font-mono text-xs font-bold">THE RESULT</div>
+              <div className="text-slate-400 font-mono text-xs font-semibold uppercase tracking-wider">THE RESULT</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Plain English Verdicts</h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
                 Instead of confusing hex codes, you see: <em>&ldquo;Warning: This website claims to claim an airdrop, but it will empty your USDC balance.&rdquo;</em>
@@ -221,7 +221,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
       <section className="py-16 px-4 lg:px-8 border-b border-[#1e293b] bg-[#090d16]">
         <div className="max-w-5xl mx-auto space-y-10">
           <div className="text-center space-y-2">
-            <span className="font-mono text-xs uppercase tracking-widest text-amber-400">
+            <span className="font-mono text-xs uppercase tracking-widest text-slate-400 font-semibold">
               Core Architecture
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white font-sans">
@@ -235,7 +235,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
             {/* Step 1 */}
             <div className="p-5 rounded border border-[#1e293b] bg-[#0e131f] space-y-2.5">
-              <div className="text-[10px] text-amber-400 font-bold">01 / INTENT PARSER</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">01 / INTENT PARSER</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Decode Promises</h3>
               <p className="text-slate-400 font-sans text-xs leading-relaxed">
                 Extracts the human intent promised by the dApp UI and maps it to required method selectors.
@@ -244,7 +244,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
             {/* Step 2 */}
             <div className="p-5 rounded border border-[#1e293b] bg-[#0e131f] space-y-2.5">
-              <div className="text-[10px] text-cyan-400 font-bold">02 / LOCAL FORK</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">02 / LOCAL FORK</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Client-Side Viem</h3>
               <p className="text-slate-400 font-sans text-xs leading-relaxed">
                 Executes transaction bytecode inside a private client-side EVM sandbox without spending gas.
@@ -253,7 +253,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
             {/* Step 3 */}
             <div className="p-5 rounded border border-[#1e293b] bg-[#0e131f] space-y-2.5">
-              <div className="text-[10px] text-amber-400 font-bold">03 / METROLOGY RADAR</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">03 / METROLOGY RADAR</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Slot-Level SSTORE</h3>
               <p className="text-slate-400 font-sans text-xs leading-relaxed">
                 Tracks state deltas across every 32-byte storage slot, flagging infinite approvals and proxy rewrites.
@@ -262,7 +262,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
             {/* Step 4 */}
             <div className="p-5 rounded border border-[#1e293b] bg-[#0e131f] space-y-2.5">
-              <div className="text-[10px] text-emerald-400 font-bold">04 / ATTESTATION</div>
+              <div className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">04 / ATTESTATION</div>
               <h3 className="font-sans font-bold text-sm text-slate-100">Cryptographic Seal</h3>
               <p className="text-slate-400 font-sans text-xs leading-relaxed">
                 Emits an EIP-712 signed receipt with SHA-256 state root before unlocking the broadcast action.
@@ -276,7 +276,7 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-100 font-mono text-xs font-medium cursor-pointer transition-colors"
             >
               <span>TRY THE LIVE BENCHMARKS IN COCKPIT</span>
-              <ArrowRight className="size-3.5 text-amber-400" />
+              <ArrowRight className="size-3.5 text-slate-400" />
             </button>
           </div>
         </div>

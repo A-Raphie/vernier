@@ -70,9 +70,9 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
             </Button>
             <div>
               <div className="flex items-center gap-2">
-                <Lock className="size-3.5 text-amber-400" />
+                <Lock className="size-3.5 text-slate-400" />
                 <span className="text-xs font-mono uppercase text-slate-400 font-medium tracking-wider">
-                  SURFACE 3: CRYPTOGRAPHIC PROOF RAIL
+                  CRYPTOGRAPHIC PROOF & ATTESTATION
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-sans text-white mt-0.5">
@@ -82,14 +82,15 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
           </div>
 
           {/* Scenario Selector */}
-          <TabsList>
+          <TabsList className="bg-black/40 border border-slate-800 p-0.5">
             {SCENARIOS.map((s) => (
               <TabsTrigger
                 key={s.id}
                 active={s.id === selectedScenarioId}
                 onClick={() => onSelectScenario(s.id)}
+                className={`px-2.5 py-1 text-xs font-mono ${s.id === selectedScenarioId ? '!bg-slate-800 !text-white' : '!text-slate-400'}`}
               >
-                {s.name.split(' ')[0]}
+                {s.id === 'permit2-drain' ? 'Airdrop Phishing' : s.id === 'proxy-delegatecall-hijack' ? 'Implementation Hijack' : 'Uniswap Clean'}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -145,7 +146,7 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
 
             <Card className="p-4 space-y-1 bg-[#090d16]">
               <div className="text-[10px] text-slate-500 uppercase">CAPITAL PROTECTED</div>
-              <div className="text-amber-400 font-bold tabular-nums">{activeScenario.receipt.gasSaved}</div>
+              <div className="text-white font-semibold tabular-nums">{activeScenario.receipt.gasSaved}</div>
             </Card>
           </div>
 
