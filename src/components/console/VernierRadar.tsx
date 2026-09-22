@@ -1,234 +1,238 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Radar, AlertOctagon, Sliders, Shield, Fuel, Database } from 'lucide-react';
+import { Sliders, Fuel, Database, ShieldAlert, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
 
 interface VernierRadarProps {
   scenario: SimulationScenario;
+  activeStepIndex: number;
+  setActiveStepIndex: (index: number) => void;
 }
 
-export const VernierRadar: React.FC<VernierRadarProps> = ({ scenario }) => {
-  const [caliperOffset, setCaliperOffset] = useState<number>(35);
+export const VernierRadar: React.FC<VernierRadarProps> = ({
+  scenario,
+  activeStepIndex,
+  setActiveStepIndex,
+}) => {
+  const totalSteps = scenario.opcodeTrace.length;
+  const currentOpcode = scenario.opcodeTrace[activeStepIndex] || scenario.opcodeTrace[0];
+  const isHazardStep = currentOpcode.isBlocked || (activeStepIndex === totalSteps - 1 && scenario.riskScore > 40);
 
   const isCritical = scenario.riskLevel === 'CRITICAL';
   const isHigh = scenario.riskLevel === 'HIGH';
 
+  const handlePrev = () => {
+    setActiveStepIndex(Math.max(0, activeStepIndex - 1));
+  };
+
+  const handleNext = () => {
+    setActiveStepIndex(Math.min(totalSteps - 1, activeStepIndex + 1));
+  };
+
+  // Calculate cumulative gas simulated up to this step
+  const gasFraction = (activeStepIndex + 1) / totalSteps;
+  const currentGas = Math.round(scenario.metrics.gasSimulated * gasFraction);
+
   return (
-    <div className="flex flex-col gap-4 p-5 rounded-lg border border-[#1e293b] bg-[#0f172a] shadow-xl">
+    <div className="flex flex-col gap-4 p-5 rounded border border-[#1e293b] bg-[#0e131f]">
       {/* Console Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1e293b] pb-3">
         <div className="flex items-center gap-2">
-          <Radar className="w-4 h-4 text-cyan-400" />
-          <span className="font-mono text-xs font-bold uppercase tracking-wider text-slate-200">
-            EVM STATE DELTA & STORAGE SLOT RADAR
+          <Sliders className="size-3.5 text-amber-400" />
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200">
+            TIME-TRAVEL EXECUTION SCRUBBER
           </span>
         </div>
         <div className="flex items-center gap-3 font-mono text-[11px] text-slate-400">
-          <span>SLOTS TOUCHED: <strong className="text-cyan-300">{scenario.metrics.storageSlotsTouched}</strong></span>
-          <span>SHIFTS: <strong className="text-amber-300">{scenario.metrics.stateShiftsCount}</strong></span>
+          <span>STEP <strong className="text-slate-200 tabular-nums">{activeStepIndex + 1}</strong> OF <strong className="text-slate-200 tabular-nums">{totalSteps}</strong></span>
+          <span>GAS: <strong className="text-amber-300 tabular-nums">{currentGas.toLocaleString()}</strong></span>
         </div>
       </div>
 
-      {/* Signature Move: Interactive Vernier Sliding Caliper Scale */}
-      <div className="p-3.5 rounded border border-[#1e293b] bg-[#0a0d14] space-y-2">
+      {/* Signature Move: Functional Vernier Caliper Scrubber */}
+      <div className="p-3.5 rounded border border-slate-800 bg-[#090d16] space-y-2.5">
         <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-          <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
-            <Sliders className="w-3.5 h-3.5" />
-            <span>VERNIER PRECISION CALIPER SCALE</span>
-          </div>
-          <div className="text-slate-300">
-            TOLERANCE OFFSET: <span className="font-bold text-amber-300 font-mono">{(caliperOffset * 0.025).toFixed(3)} μs</span>
+          <span className="text-slate-300 font-medium">
+            VERNIER STEP CALIPER
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrev}
+              disabled={activeStepIndex === 0}
+              className="p-1 rounded border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              aria-label="Previous execution step"
+            >
+              <SkipBack className="size-3" />
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={activeStepIndex === totalSteps - 1}
+              className="p-1 rounded border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+              aria-label="Next execution step"
+            >
+              <SkipForward className="size-3" />
+            </button>
+            <span className="font-mono text-amber-300 tabular-nums font-semibold ml-1">
+              OPCODE #{currentOpcode.step}
+            </span>
           </div>
         </div>
 
-        {/* Vernier Graduated Ticks Visualizer */}
-        <div className="relative w-full h-8 bg-[#0f172a] rounded border border-slate-700/60 overflow-hidden flex items-center select-none">
-          {/* Main Fixed Metric Ruler (0 to 100) */}
+        {/* Physical Vernier Metric Ruler */}
+        <div className="relative w-full h-9 bg-[#0e131f] rounded border border-slate-800 overflow-hidden flex items-center select-none">
+          {/* Static Graduated Metric Scale */}
           <div className="absolute inset-0 flex justify-between px-2 items-center pointer-events-none opacity-40">
-            {Array.from({ length: 25 }).map((_, i) => (
+            {Array.from({ length: 37 }).map((_, i) => (
               <div key={i} className="flex flex-col items-center">
-                <div className={`w-[1px] ${i % 5 === 0 ? 'h-4 bg-amber-400' : 'h-2 bg-slate-500'}`} />
-                {i % 5 === 0 && <span className="text-[8px] font-mono text-slate-400">{i * 4}</span>}
+                <div className={`w-[1px] ${i % 5 === 0 ? 'h-4 bg-slate-400' : 'h-2 bg-slate-600'}`} />
+                {i % 10 === 0 && <span className="text-[7px] font-mono text-slate-400">{i}</span>}
               </div>
             ))}
           </div>
 
-          {/* Sliding Auxiliary Vernier Scale Runner */}
-          <div
-            className="absolute top-0 bottom-0 w-16 border-x border-cyan-400 bg-cyan-500/15 flex items-center justify-center transition-all duration-75"
-            style={{ left: `calc(${caliperOffset}% - 32px)` }}
-          >
-            <div className="w-0.5 h-full bg-cyan-400" />
-            <div className="absolute -top-1 px-1 rounded bg-cyan-900 text-[8px] font-mono text-cyan-200 border border-cyan-400/50">
-              SLOT {Math.floor(caliperOffset / 25)}
-            </div>
-          </div>
-
-          {/* Interactive Range Input */}
+          {/* Interactive Range Slider */}
           <input
             type="range"
             min="0"
-            max="100"
-            value={caliperOffset}
-            onChange={(e) => setCaliperOffset(Number(e.target.value))}
-            className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-full"
-            aria-label="Vernier Caliper Scale"
+            max={totalSteps - 1}
+            value={activeStepIndex}
+            onChange={(e) => setActiveStepIndex(Number(e.target.value))}
+            className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-full z-10"
+            aria-label="Vernier Step Scrubber"
           />
+
+          {/* Sliding Caliper Vernier Cursor */}
+          <div
+            className="absolute top-0 bottom-0 w-20 border-x border-amber-400/80 bg-amber-500/10 flex items-center justify-center pointer-events-none transition-all duration-75"
+            style={{ left: `calc(${(activeStepIndex / (totalSteps - 1)) * 92}% - 4px)` }}
+          >
+            <div className="w-[1.5px] h-full bg-amber-400" />
+            <div className="absolute -top-0.5 px-1 rounded bg-amber-950 text-[8px] font-mono text-amber-200 border border-amber-500/50 uppercase">
+              {currentOpcode.opcode}
+            </div>
+          </div>
+        </div>
+
+        {/* Active Opcode Inspector Bar */}
+        <div className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded border border-slate-800 bg-[#0e131f]">
+          <div className="flex items-center gap-2">
+            <span className="text-slate-500">ACTIVE INSTRUCTION:</span>
+            <span className="font-bold text-amber-300">[{currentOpcode.opcode}]</span>
+            {currentOpcode.arg && <span className="text-slate-300 font-normal">{currentOpcode.arg}</span>}
+          </div>
+          {currentOpcode.isBlocked ? (
+            <span className="px-1.5 py-0.5 rounded border border-rose-800 bg-rose-950/60 text-[10px] text-rose-300 font-bold">
+              INTERCEPTED BY FIREWALL
+            </span>
+          ) : (
+            <span className="text-slate-400 text-[11px]">
+              {currentOpcode.comment || 'Normal instruction execution'}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Center Visualization: Radar Sweep & Storage Bar Shift */}
+      {/* Gas Profile & Storage Shift Telemetry */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Polar Coordinate Radar Screen */}
-        <div className="relative h-48 rounded border border-[#1e293b] bg-[#0a0d14] flex items-center justify-center overflow-hidden">
-          {/* Circular Rings */}
-          <div className="absolute w-40 h-40 rounded-full border border-slate-700/40" />
-          <div className="absolute w-28 h-28 rounded-full border border-slate-700/60" />
-          <div className="absolute w-16 h-16 rounded-full border border-slate-700/80" />
-          <div className="absolute w-full h-[1px] bg-slate-700/40" />
-          <div className="absolute h-full w-[1px] bg-slate-700/40" />
+        {/* Gas Consumption Meter */}
+        <div className="p-3.5 rounded border border-slate-800 bg-[#090d16] flex flex-col justify-between space-y-2.5">
+          <div className="flex items-center justify-between text-xs font-mono">
+            <span className="text-slate-400 flex items-center gap-1.5">
+              <Fuel className="size-3.5 text-slate-400" />
+              <span>CUMULATIVE GAS PROFILE</span>
+            </span>
+            <span className="text-slate-200 font-bold tabular-nums">
+              {currentGas.toLocaleString()} / {scenario.metrics.gasSimulated.toLocaleString()}
+            </span>
+          </div>
 
-          {/* Rotating Radar Sweep Cone */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-40 h-40 rounded-full animate-radar-sweep origin-center opacity-70">
+          <div className="space-y-2">
+            <div className="w-full h-2 bg-slate-800 rounded overflow-hidden">
               <div
-                className="w-20 h-20 origin-bottom-right"
-                style={{
-                  background: isCritical
-                    ? 'conic-gradient(from 0deg, rgba(239, 68, 68, 0.4) 0deg, transparent 60deg)'
-                    : 'conic-gradient(from 0deg, rgba(6, 182, 212, 0.4) 0deg, transparent 60deg)',
-                }}
+                className={`h-full rounded transition-all duration-150 ${
+                  scenario.metrics.gasSimulated > scenario.metrics.gasExpected * 1.5
+                    ? 'bg-rose-500'
+                    : 'bg-emerald-500'
+                }`}
+                style={{ width: `${(currentGas / 250000) * 100}%` }}
               />
             </div>
-          </div>
-
-          {/* Radar Blips */}
-          {scenario.storageDeltas.map((delta, i) => {
-            const angle = (i * 90 + caliperOffset * 1.5) * (Math.PI / 180);
-            const radius = 35 + (i * 18);
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-
-            return (
-              <div
-                key={delta.slot}
-                className={`absolute w-3 h-3 rounded-full flex items-center justify-center transition-transform duration-300 ${
-                  delta.isHazardous
-                    ? 'bg-rose-500 shadow-[0_0_8px_#ef4444] animate-ping'
-                    : 'bg-emerald-400 shadow-[0_0_6px_#10b981]'
-                }`}
-                style={{ transform: `translate(${x}px, ${y}px)` }}
-                title={`${delta.label} (${delta.slot})`}
-              />
-            );
-          })}
-
-          <div className="absolute bottom-2 left-2 text-[9px] font-mono text-slate-500">
-            POLAR STATE VECTOR
-          </div>
-          <div className="absolute top-2 right-2 text-[9px] font-mono text-cyan-400 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span>SWEEPING</span>
+            <div className="flex justify-between text-[10px] font-mono text-slate-500">
+              <span>Expected Baseline: {scenario.metrics.gasExpected.toLocaleString()}</span>
+              <span className={scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? 'text-rose-400 font-semibold' : 'text-emerald-400'}>
+                {scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? '+' : ''}
+                {(((scenario.metrics.gasSimulated - scenario.metrics.gasExpected) / scenario.metrics.gasExpected) * 100).toFixed(0)}%
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Gas & State Profile Chart */}
-        <div className="p-3.5 rounded border border-[#1e293b] bg-[#0a0d14] flex flex-col justify-between space-y-3">
+        {/* State Machine Status */}
+        <div className="p-3.5 rounded border border-slate-800 bg-[#090d16] flex flex-col justify-between space-y-2">
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-slate-400 flex items-center gap-1.5">
-              <Fuel className="w-3.5 h-3.5 text-amber-400" />
-              <span>GAS PROFILE PROFILE DELTA</span>
+              <Database className="size-3.5 text-slate-400" />
+              <span>MUTATION STATUS</span>
             </span>
-            <span className="text-slate-300 font-bold">
-              {scenario.metrics.gasSimulated.toLocaleString()} units
+            <span className="text-slate-200 font-bold tabular-nums">
+              {scenario.metrics.storageSlotsTouched} SLOTS
             </span>
           </div>
-
-          {/* Simulated vs Expected Gas Bars */}
-          <div className="space-y-2">
-            <div>
-              <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
-                <span>SIMULATED EXECUTION</span>
-                <span className={scenario.metrics.gasSimulated > scenario.metrics.gasExpected * 1.5 ? 'text-rose-400 font-bold' : 'text-slate-300'}>
-                  {scenario.metrics.gasSimulated.toLocaleString()}
-                </span>
-              </div>
-              <div className="w-full h-2.5 bg-slate-800 rounded overflow-hidden">
-                <div
-                  className={`h-full rounded transition-all duration-500 ${
-                    scenario.metrics.gasSimulated > scenario.metrics.gasExpected * 1.5
-                      ? 'bg-gradient-to-r from-amber-500 to-rose-500'
-                      : 'bg-cyan-500'
-                  }`}
-                  style={{ width: `${Math.min(100, (scenario.metrics.gasSimulated / 250000) * 100)}%` }}
-                />
-              </div>
+          <div className="text-[11px] font-mono text-slate-400 space-y-1">
+            <div className="flex justify-between">
+              <span>Simulation State:</span>
+              <span className="text-slate-200 font-medium">REPLAY ACTIVE</span>
             </div>
-
-            <div>
-              <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
-                <span>EXPECTED BENCHMARK</span>
-                <span className="text-slate-400">{scenario.metrics.gasExpected.toLocaleString()}</span>
-              </div>
-              <div className="w-full h-2 bg-slate-800 rounded overflow-hidden">
-                <div
-                  className="h-full bg-slate-600 rounded"
-                  style={{ width: `${Math.min(100, (scenario.metrics.gasExpected / 250000) * 100)}%` }}
-                />
-              </div>
+            <div className="flex justify-between">
+              <span>Security Verdict:</span>
+              <span className={isCritical ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}>
+                {scenario.riskLevel}
+              </span>
             </div>
-          </div>
-
-          <div className="pt-2 border-t border-[#1e293b] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-slate-400">Gas Delta:</span>
-            <span className={scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? 'text-rose-400 font-semibold' : 'text-emerald-400'}>
-              {scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? '+' : ''}
-              {(((scenario.metrics.gasSimulated - scenario.metrics.gasExpected) / scenario.metrics.gasExpected) * 100).toFixed(1)}%
-            </span>
           </div>
         </div>
       </div>
 
       {/* Tabular Storage Slot Differential Inspector */}
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-          <Database className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="flex items-center justify-between text-xs font-mono text-slate-400">
           <span>STORAGE SLOT DIFFERENTIAL LOG (SSTORE/SLOAD)</span>
+          <span className="text-[10px] text-slate-500">EVM WORD DELTAS</span>
         </div>
 
-        <div className="border border-[#1e293b] rounded overflow-hidden">
+        <div className="border border-slate-800 rounded overflow-hidden">
           <table className="w-full text-left font-mono text-[11px]">
-            <thead className="bg-[#0a0d14] text-slate-400 border-b border-[#1e293b]">
+            <thead className="bg-[#090d16] text-slate-400 border-b border-slate-800">
               <tr>
                 <th className="py-2 px-3">SLOT</th>
-                <th className="py-2 px-3">VARIABLE / LABEL</th>
-                <th className="py-2 px-3 hidden sm:table-cell">PREVIOUS STATE</th>
-                <th className="py-2 px-3">MUTATED STATE</th>
-                <th className="py-2 px-3 text-right">STATUS</th>
+                <th className="py-2 px-3">VARIABLE</th>
+                <th className="py-2 px-3 hidden sm:table-cell">PREVIOUS</th>
+                <th className="py-2 px-3">MUTATED</th>
+                <th className="py-2 px-3 text-right">VERDICT</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1e293b]/60 bg-[#0f172a]/60">
+            <tbody className="divide-y divide-slate-800/80 bg-[#0e131f]">
               {scenario.storageDeltas.map((delta) => (
                 <tr
                   key={delta.slot}
-                  className={delta.isHazardous ? 'bg-rose-950/20 text-rose-200' : 'text-slate-300'}
+                  className={delta.isHazardous ? 'bg-rose-950/20 text-slate-200' : 'text-slate-300'}
                 >
-                  <td className="py-2 px-3 font-semibold text-cyan-300">{delta.slot}</td>
-                  <td className="py-2 px-3">{delta.label}</td>
-                  <td className="py-2 px-3 text-slate-500 hidden sm:table-cell truncate max-w-[140px]">
+                  <td className="py-2 px-3 font-semibold text-slate-200">{delta.slot}</td>
+                  <td className="py-2 px-3 text-slate-300">{delta.label}</td>
+                  <td className="py-2 px-3 text-slate-500 hidden sm:table-cell truncate max-w-[130px]">
                     {delta.prevValue}
                   </td>
-                  <td className="py-2 px-3 font-semibold truncate max-w-[160px]">
+                  <td className="py-2 px-3 font-semibold truncate max-w-[150px]">
                     {delta.newValue}
                   </td>
                   <td className="py-2 px-3 text-right">
                     {delta.isHazardous ? (
-                      <span className="px-2 py-0.5 rounded border border-rose-500/40 bg-rose-950/40 text-[10px] text-rose-300 font-bold">
+                      <span className="px-1.5 py-0.5 rounded border border-rose-800/60 bg-rose-950/40 text-[10px] text-rose-300 font-semibold">
                         HAZARD
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-950/40 text-[10px] text-emerald-300">
+                      <span className="px-1.5 py-0.5 rounded border border-emerald-800/60 bg-emerald-950/40 text-[10px] text-emerald-300 font-semibold">
                         CONFORM
                       </span>
                     )}
@@ -242,16 +246,16 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({ scenario }) => {
 
       {/* Pathogenic Call Alert Banner */}
       {(isCritical || isHigh) && (
-        <div className="p-4 rounded-lg border border-rose-500/50 bg-rose-950/30 space-y-2 animate-pulse-glow">
+        <div className="p-4 rounded border border-rose-800/80 bg-rose-950/20 space-y-2 animate-alert-pulse">
           <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-bold uppercase tracking-wide">
-            <AlertOctagon className="w-4 h-4 text-rose-500" />
-            <span>BLOCKED MALICIOUS CALL: PATHOGENIC SIGNAL DETECTED</span>
+            <ShieldAlert className="size-4 text-rose-500" />
+            <span>CONTAINMENT TRIGGER: PATHOGENIC SIGNAL DETECTED</span>
           </div>
-          <p className="text-xs text-rose-200/90 font-sans leading-relaxed">
+          <p className="text-xs text-slate-300 font-sans leading-relaxed text-pretty">
             {scenario.threat.pathogenicSignal}
           </p>
-          <div className="text-[11px] font-mono text-rose-300/80 border-t border-rose-500/30 pt-2">
-            Remediation: <span className="font-semibold text-rose-200">{scenario.threat.remediation}</span>
+          <div className="text-[11px] font-mono text-slate-400 border-t border-rose-900/40 pt-2">
+            Policy Action: <span className="font-semibold text-rose-300">{scenario.threat.remediation}</span>
           </div>
         </div>
       )}

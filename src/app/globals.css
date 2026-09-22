@@ -1,27 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0d14;
-  --surface-card: #0f172a;
-  --surface-elevated: #1e293b;
-  --surface-overlay: rgba(15, 23, 42, 0.9);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-metric: #1e293b;
-  --border-hover: rgba(255, 255, 255, 0.18);
-  --border-focus: rgba(245, 158, 11, 0.5);
+  --background: #090d16;
+  --surface-card: #0e131f;
+  --surface-elevated: #151c2e;
+  --surface-overlay: rgba(14, 19, 31, 0.95);
+  --border-subtle: #1e293b;
+  --border-metric: #243048;
+  --border-hover: #334155;
 
   --accent-amber: #f59e0b;
   --accent-amber-light: #fbbf24;
-  --accent-amber-muted: rgba(245, 158, 11, 0.15);
+  --accent-amber-muted: rgba(245, 158, 11, 0.1);
 
-  --telemetry-cyan: #06b6d4;
-  --telemetry-cyan-muted: rgba(6, 182, 212, 0.15);
+  --telemetry-cyan: #38bdf8;
+  --telemetry-cyan-muted: rgba(56, 189, 248, 0.1);
 
   --breach-crimson: #ef4444;
-  --breach-crimson-muted: rgba(239, 68, 68, 0.15);
+  --breach-crimson-muted: rgba(239, 68, 68, 0.1);
 
   --conform-emerald: #10b981;
-  --conform-emerald-muted: rgba(16, 185, 129, 0.15);
+  --conform-emerald-muted: rgba(16, 185, 129, 0.1);
 
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
@@ -37,7 +36,7 @@ body {
   padding: 0;
 }
 
-/* Precision Metrology & Telemetry Scrollbar */
+/* Precision Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -48,46 +47,29 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: #1e293b;
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: #334155;
 }
 
-/* Radar Sweep Animation */
-@keyframes radarSweep {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-radar-sweep {
-  animation: radarSweep 4s linear infinite;
-  transform-origin: center center;
-}
-
-/* Pulse Glow */
-@keyframes pulseGlow {
+/* Subtle containment pulse for active alerts */
+@keyframes alertPulse {
   0%, 100% {
-    opacity: 0.6;
-    transform: scale(1);
+    border-color: rgba(239, 68, 68, 0.4);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.03);
+    border-color: rgba(239, 68, 68, 0.8);
   }
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s ease-in-out infinite;
+.animate-alert-pulse {
+  animation: alertPulse 2s ease-in-out infinite;
 }
 
-/* Monospace Micro Numbers */
-.font-mono-numbers {
-  font-feature-settings: "tnum" 1, "zero" 1;
+/* Tabular numbers */
+.tabular-numbers {
+  font-variant-numeric: tabular-nums;
 }
