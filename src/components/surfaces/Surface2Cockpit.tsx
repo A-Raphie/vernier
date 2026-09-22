@@ -101,7 +101,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         <div className="vn-panel" style={{ borderRadius: 12 }}>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3">
 
-            {/* Left cluster: back button + traffic light + scenario tabs */}
+            {/* Left cluster: back button + minimal status pill + scenario tabs */}
             <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto max-w-full pb-1 sm:pb-0" style={{ minWidth: 0 }}>
               <Button
                 variant="outline"
@@ -113,34 +113,14 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 <ArrowLeft className="size-4" />
               </Button>
 
-              {/* 5-Second Traffic Light status dots */}
-              <div className="shrink-0" style={{
-                display: 'flex', alignItems: 'center', gap: 5,
-                padding: '4px 8px', borderRadius: 999,
-                background: 'var(--bg)', border: '1px solid var(--border)',
-              }} title={isDanger ? 'Threat Intercepted (Red)' : 'Safe Route (Green)'}>
-                <span style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: isCritical ? 'var(--rose)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: isCritical ? '0 0 8px rgba(244,63,94,0.9)' : 'none',
-                  transition: 'all 200ms',
-                }} />
-                <span style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: isHigh ? 'var(--amber)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: isHigh ? '0 0 8px rgba(245,158,11,0.9)' : 'none',
-                  transition: 'all 200ms',
-                }} />
-                <span style={{
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: isClean ? 'var(--emerald)' : 'rgba(255,255,255,0.08)',
-                  boxShadow: isClean ? '0 0 8px rgba(16,185,129,0.9)' : 'none',
-                  transition: 'all 200ms',
-                }} />
+              {/* Status pill */}
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-900/60 border border-slate-800 text-[11px] font-mono text-slate-300 shrink-0">
+                <span className={`size-1.5 rounded-full ${isDanger ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+                <span>{isDanger ? 'Threat Active' : 'Safe Route'}</span>
               </div>
 
               {/* Scenarios pills */}
-              <TabsList className="overflow-x-auto shrink-0 flex-nowrap">
+              <TabsList className="overflow-x-auto shrink-0 flex-nowrap bg-black/40 border border-slate-800 p-0.5 rounded-lg">
                 {SCENARIOS.map((s) => (
                   <TabsTrigger
                     key={s.id}
@@ -150,10 +130,11 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                       setActiveStepIndex(0);
                       setBlindSignTestActive(false);
                     }}
+                    className={s.id === selectedScenarioId ? '!bg-slate-800 !text-white !border-slate-700 shadow-sm' : '!text-slate-400 hover:!text-slate-200'}
                   >
                     <span style={{
-                      display: 'inline-block', width: 6, height: 6, borderRadius: '50%', marginRight: 5,
-                      background: s.riskLevel === 'CRITICAL' ? 'var(--rose)' : s.riskLevel === 'HIGH' ? 'var(--amber)' : 'var(--emerald)',
+                      display: 'inline-block', width: 5, height: 5, borderRadius: '50%', marginRight: 6,
+                      background: s.riskLevel === 'CRITICAL' ? '#f43f5e' : s.riskLevel === 'HIGH' ? '#f59e0b' : '#10b981',
                     }} />
                     {s.id === 'permit2-drain' ? 'Airdrop Phishing' : s.id === 'proxy-delegatecall-hijack' ? 'Implementation Hijack' : 'Uniswap Clean'}
                   </TabsTrigger>
@@ -161,8 +142,8 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               </TabsList>
 
               {/* Execution Latency Chip */}
-              <div className="hidden lg:flex items-center gap-1.5 font-mono text-[11px] text-cyan-400 bg-cyan-950/30 border border-cyan-500/20 px-2.5 py-1 rounded-md shrink-0">
-                <Zap className="size-3" />
+              <div className="hidden lg:flex items-center gap-1.5 font-mono text-[11px] text-slate-400 bg-slate-900/40 border border-slate-800 px-2.5 py-1 rounded-md shrink-0">
+                <Zap className="size-3 text-slate-400" />
                 <span>0.42ms execution</span>
               </div>
             </div>
@@ -172,17 +153,17 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               {/* Beginner vs Auditor Toggle */}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 2,
-                padding: 3, borderRadius: 8,
-                background: 'var(--bg)', border: '1px solid var(--border)',
+                padding: 2, borderRadius: 8,
+                background: 'rgba(0, 0, 0, 0.4)', border: '1px solid var(--border)',
               }}>
                 <button
                   type="button"
                   onClick={() => setViewMode('simple')}
                   style={{
-                    padding: '5px 11px', borderRadius: 6, fontSize: 11, fontWeight: 600,
+                    padding: '5px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600,
                     cursor: 'pointer', transition: 'all 150ms', border: 'none',
-                    background: viewMode === 'simple' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-                    color: viewMode === 'simple' ? 'var(--amber)' : 'var(--ink-secondary)',
+                    background: viewMode === 'simple' ? '#1e293b' : 'transparent',
+                    color: viewMode === 'simple' ? '#ffffff' : '#94a3b8',
                   }}
                 >
                   Simple Verdict
@@ -191,10 +172,10 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                   type="button"
                   onClick={() => setViewMode('auditor')}
                   style={{
-                    padding: '5px 11px', borderRadius: 6, fontSize: 11, fontWeight: 600,
+                    padding: '5px 12px', borderRadius: 6, fontSize: 11, fontWeight: 600,
                     cursor: 'pointer', transition: 'all 150ms', border: 'none',
-                    background: viewMode === 'auditor' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
-                    color: viewMode === 'auditor' ? 'var(--cyan)' : 'var(--ink-secondary)',
+                    background: viewMode === 'auditor' ? '#1e293b' : 'transparent',
+                    color: viewMode === 'auditor' ? '#ffffff' : '#94a3b8',
                   }}
                 >
                   Auditor Trace
@@ -203,79 +184,76 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 
               {/* Primary Action Button */}
               {isClean ? (
-                <Button
-                  variant="primary"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={handlePrimaryAction}
-                  leftIcon={<CheckCircle2 className="size-4" />}
-                  className="font-bold uppercase tracking-wider text-xs"
+                  className="bg-white text-slate-950 hover:bg-slate-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
                 >
-                  {actionConfirmed ? 'Dispatched' : 'Approve & Broadcast'}
-                </Button>
+                  <CheckCircle2 className="size-3.5 text-slate-950" />
+                  <span>{actionConfirmed ? 'Dispatched' : 'Approve & Broadcast'}</span>
+                </button>
               ) : (
-                <Button
-                  variant="destructive"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={handlePrimaryAction}
-                  leftIcon={<ShieldAlert className="size-4" />}
-                  className="font-bold uppercase tracking-wider text-xs shadow-lg shadow-rose-950/40"
+                  className="bg-white text-slate-950 hover:bg-slate-100 text-xs font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
                 >
-                  {actionConfirmed ? 'Halted' : 'Halt Transaction — Prevent Drain'}
-                </Button>
+                  <ShieldAlert className="size-3.5 text-rose-600" />
+                  <span>{actionConfirmed ? 'Halted' : 'Halt Execution'}</span>
+                </button>
               )}
             </div>
           </div>
         </div>
 
         {/* ═════════════════════════════════════════════════════════════════
-            TIER 1: SIMPLE VERDICT (WINSNZX CALIBRATED REFERENCE PATTERN)
+            TIER 1: SIMPLE VERDICT (CALM MONOCHROME REFINED PATTERN)
             ═════════════════════════════════════════════════════════════════ */}
         {viewMode === 'simple' ? (
           <div className="vn-stack" style={{ gap: 16 }}>
 
-            {/* 1. Verdict Strip (Modeled after winsznx Notice & Verdict) */}
-            <div className={`vn-panel ${isDanger ? 'border-rose-500/30' : 'border-emerald-500/30'}`} style={{ padding: '16px 20px', borderRadius: 12 }}>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start sm:items-center gap-3">
-                  <span className={`tag shrink-0 ${isDanger ? 'tag-fail' : 'tag-pass'}`} style={{ marginTop: 2 }}>
-                    {isDanger ? 'BLOCKED' : 'VERIFIED'}
-                  </span>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 16, color: 'var(--ink)' }}>
-                      {isDanger ? 'Malicious Phishing Drain Intercepted' : 'Clean Transaction Conformed'}
-                    </div>
-                    <div style={{ fontSize: 13, color: 'var(--ink-secondary)', marginTop: 2 }}>
-                      {isDanger
-                        ? 'Vernier simulated state mutations in 0.42ms and caught an unbounded token drain attempt.'
-                        : 'Parameters conform cleanly to declared swap intent with zero foreign storage access.'}
-                    </div>
+            {/* 1. Verdict Strip (Clean Obsidian with White Tabular Metrics) */}
+            <div className="vn-panel" style={{ padding: '20px 24px', borderRadius: 12 }}>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className={`size-2 rounded-full ${isDanger ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+                    <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-medium">Status</span>
                   </div>
+                  <h2 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+                    {isDanger ? 'Phishing Drain Intercepted' : 'Clean Transaction Conformed'}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+                    {isDanger
+                      ? 'Vernier simulated state mutations in 0.42ms and caught an unbounded token drain attempt.'
+                      : 'Parameters conform cleanly to declared swap intent with zero foreign storage access.'}
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-6 shrink-0 self-start md:self-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800/60 w-full md:w-auto justify-between md:justify-end">
+                <div className="flex items-center gap-6 shrink-0 self-start md:self-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800/80 w-full md:w-auto justify-between md:justify-end">
                   <div className="text-left md:text-right">
-                    <div className="label">Shielded</div>
-                    <div className="value-lg" style={{ color: isDanger ? 'var(--rose)' : 'var(--emerald)', fontSize: 20 }}>
-                      {isDanger ? '$142,000.00' : '$0.00 At Risk'}
+                    <div className="text-2xl sm:text-3xl font-semibold text-white tracking-tight font-mono tabular-nums">
+                      {isDanger ? '$142,000.00' : '$0.00'}
                     </div>
+                    <div className="text-[11px] font-mono text-slate-400 mt-0.5">Shielded</div>
                   </div>
-                  <div style={{ height: 28, width: 1, background: 'var(--border)' }} />
+                  <div style={{ height: 32, width: 1, background: 'var(--border)' }} />
                   <div className="text-right">
-                    <div className="label">Latency</div>
-                    <div className="value-lg" style={{ color: 'var(--cyan)', fontSize: 20 }}>
+                    <div className="text-2xl sm:text-3xl font-semibold text-white tracking-tight font-mono tabular-nums">
                       0.42ms
                     </div>
+                    <div className="text-[11px] font-mono text-slate-400 mt-0.5">Processing time</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. Core Side-by-Side Comparison (Exact pattern from winsznx/kept/ProofRun.tsx) */}
+            {/* 2. Core Side-by-Side Comparison */}
             <div className="vn-grid-2" style={{ gap: 16 }}>
               {/* Left Card: Promised by Website */}
               <div className="vn-panel" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 10, borderRadius: 12 }}>
                 <span className="label">Promised by Website</span>
-                <div className="value-lg">{explainer.scamPromise}</div>
+                <div className="value-lg text-white">{explainer.scamPromise}</div>
                 <blockquote className="excerpt">“{explainer.scamSubtitle}”</blockquote>
                 
                 <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12, overflow: 'hidden' }}>
@@ -289,18 +267,14 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               {/* Right Card: Simulated Execution */}
               <div className="vn-panel" style={{
                 padding: 22, display: 'flex', flexDirection: 'column', gap: 10, borderRadius: 12,
-                borderColor: isDanger ? 'rgba(244, 63, 94, 0.35)' : 'rgba(16, 185, 129, 0.35)',
-                background: isDanger ? 'rgba(244, 63, 94, 0.03)' : 'rgba(16, 185, 129, 0.03)',
               }}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="label" style={{ color: isDanger ? '#fca5a5' : '#6ee7b7' }}>
-                    Simulated On-Chain Execution
-                  </span>
+                  <span className="label">Simulated Execution</span>
                   <span className={`tag ${isDanger ? 'tag-fail' : 'tag-pass'}`}>
                     {isDanger ? 'HAZARD DETECTED' : 'CONFORMING'}
                   </span>
                 </div>
-                <div className="value-lg" style={{ color: isDanger ? 'var(--rose)' : 'var(--emerald)' }}>
+                <div className="value-lg" style={{ color: isDanger ? '#fda4af' : 'var(--ink)', fontSize: 22 }}>
                   {explainer.victimLoss}
                 </div>
                 <p style={{ fontSize: 13, color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
@@ -309,14 +283,14 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 
                 <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12 }}>
                   <span style={{ color: 'var(--ink-muted)' }}>Policy:</span>
-                  <span style={{ color: isDanger ? '#fca5a5' : '#6ee7b7', fontWeight: 600 }}>
+                  <span style={{ color: isDanger ? '#fca5a5' : 'var(--ink-secondary)', fontWeight: 500 }}>
                     {activeScenario.threat.remediation}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* 3. Safety Gate Stack (Modeled after winsznx/airspace GateStack) */}
+            {/* 3. Safety Gate Stack (Clean Monochromatic Checklist) */}
             <div className="vn-panel" style={{ padding: 20, borderRadius: 12 }}>
               <div className="vn-row-between" style={{ marginBottom: 12 }}>
                 <span className="label">Pre-Execution Safety Verification Gates</span>
@@ -356,7 +330,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 size="sm"
                 onClick={() => setBlindSignTestActive(!blindSignTestActive)}
                 className="text-slate-400 hover:text-slate-200 text-xs font-mono"
-                leftIcon={<Eye className="size-3.5 text-amber-400" />}
+                leftIcon={<Eye className="size-3.5 text-slate-400" />}
               >
                 {blindSignTestActive ? 'Hide MetaMask blind sign comparison' : 'Compare with MetaMask blind sign →'}
               </Button>
@@ -365,8 +339,8 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setViewMode('auditor')}
-                className="text-xs font-mono border-slate-800 hover:border-slate-700"
-                leftIcon={<Terminal className="size-3.5 text-cyan-400" />}
+                className="text-xs font-mono border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white"
+                leftIcon={<Terminal className="size-3.5 text-slate-400" />}
               >
                 Open Auditor Caliper & Bytecode Trace →
               </Button>
@@ -376,34 +350,34 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             {blindSignTestActive && (
               <div className="vn-panel" style={{ padding: 18, borderRadius: 12 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="grid-cols-1 md:grid-cols-2">
-                  <div style={{ padding: 14, borderRadius: 8, background: '#131825', border: '1px solid #1e293b' }}>
+                  <div style={{ padding: 14, borderRadius: 8, background: '#0e131f', border: '1px solid #1e293b' }}>
                     <div className="vn-row-between" style={{ marginBottom: 6 }}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: '#f8fafc' }}>Standard Wallet (MetaMask Blind Sign)</span>
                       <span className="tag tag-fail">VULNERABLE</span>
                     </div>
                     <p style={{ fontSize: 11, color: '#94a3b8', margin: '0 0 6px' }}>User is prompted to sign unverified hex:</p>
                     <pre style={{
-                      padding: 8, borderRadius: 4, background: '#0b0f19',
+                      padding: 8, borderRadius: 4, background: '#070a10',
                       fontFamily: 'var(--mono)', fontSize: 10, color: '#cbd5e1',
                       wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxHeight: 60, overflowY: 'auto',
                     }}>
                       0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9...
                     </pre>
-                    <div style={{ marginTop: 8, fontSize: 11, color: '#fca5a5' }}>
+                    <div style={{ marginTop: 8, fontSize: 11, color: '#fda4af' }}>
                       ⚠️ 0 warnings shown. User clicks Confirm and loses $142,000.
                     </div>
                   </div>
 
-                  <div style={{ padding: 14, borderRadius: 8, background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                  <div style={{ padding: 14, borderRadius: 8, background: '#0e131f', border: '1px solid #1e293b' }}>
                     <div className="vn-row-between" style={{ marginBottom: 6 }}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>Vernier Pre-Execution Intercept</span>
                       <span className="tag tag-pass">PROTECTED</span>
                     </div>
                     <p style={{ fontSize: 11, color: 'var(--ink-secondary)', margin: '0 0 6px' }}>Simulated on-chain in 0.42ms:</p>
-                    <div style={{ padding: 8, borderRadius: 4, background: 'rgba(9, 13, 22, 0.8)', border: '1px solid var(--border)', fontSize: 11, color: 'var(--emerald)' }}>
+                    <div style={{ padding: 8, borderRadius: 4, background: '#070a10', border: '1px solid var(--border)', fontSize: 11, color: '#cbd5e1' }}>
                       ✓ Pathogenic Permit2 allowance overwrite caught before signature.
                     </div>
-                    <div style={{ marginTop: 8, fontSize: 11, color: 'var(--emerald)', fontWeight: 600 }}>
+                    <div style={{ marginTop: 8, fontSize: 11, color: '#a7f3d0', fontWeight: 600 }}>
                       ✓ Signature blocked automatically. $142,000 preserved.
                     </div>
                   </div>

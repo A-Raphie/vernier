@@ -24,7 +24,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
             onClick={() => onTabChange('overview')}
             className="flex items-center gap-2.5 cursor-pointer text-left focus:outline-none"
           >
-            <div className="size-7 rounded bg-[#151c2e] border border-slate-700/80 flex items-center justify-center text-amber-400 font-mono font-bold text-xs">
+            <div className="size-7 rounded bg-[#131825] border border-slate-700/80 flex items-center justify-center text-slate-200 font-mono font-bold text-xs">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4v16" />
                 <path d="M4 6h12" />
@@ -57,7 +57,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
             onClick={() => onTabChange('cockpit')}
           >
             <span>Cockpit</span>
-            <span className="size-1.5 rounded-full bg-amber-400" />
+            <span className="size-1.5 rounded-full bg-slate-400" />
           </TabsTrigger>
 
           <TabsTrigger

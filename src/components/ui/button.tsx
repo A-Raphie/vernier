@@ -18,9 +18,9 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const VARIANT_MAP: Record<ButtonVariant, string> = {
   primary:
-    'bg-amber-500 text-slate-950 font-semibold hover:bg-amber-400 border border-amber-500/80 shadow-sm active:bg-amber-600',
+    'bg-white text-slate-950 font-semibold hover:bg-slate-200 border border-white shadow-sm active:bg-slate-300',
   destructive:
-    'bg-rose-600 text-white font-semibold hover:bg-rose-500 border border-rose-700 shadow-sm active:bg-rose-700',
+    'bg-rose-950/80 text-rose-200 font-semibold hover:bg-rose-900 border border-rose-800/80 shadow-sm active:bg-rose-950',
   outline:
     'border border-slate-700 bg-slate-900/60 text-slate-200 hover:bg-slate-800 hover:text-white active:bg-slate-900',
   secondary:
@@ -28,7 +28,7 @@ const VARIANT_MAP: Record<ButtonVariant, string> = {
   ghost:
     'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 active:bg-slate-800',
   link:
-    'text-amber-400 underline-offset-4 hover:underline p-0 h-auto font-normal',
+    'text-slate-200 underline-offset-4 hover:underline p-0 h-auto font-normal hover:text-white',
 };
 
 const SIZE_MAP: Record<ButtonSize, string> = {
