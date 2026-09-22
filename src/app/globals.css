@@ -47,7 +47,93 @@ body {
 .vn-stack { display: flex; flex-direction: column; gap: 12px; }
 .vn-row { display: flex; align-items: center; gap: 10px; }
 .vn-row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.vn-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.vn-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .vn-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── winsznx reference design system ── */
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-family: var(--mono);
+}
+.value-lg {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.excerpt {
+  margin: 10px 0 0 0;
+  padding: 8px 12px;
+  border-left: 2px solid var(--border-hover);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--ink-secondary);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+  border-radius: 0 4px 4px 0;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--r-pill);
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-secondary);
+}
+.tag-pass {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+}
+.tag-fail {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.3);
+  color: #fca5a5;
+}
+.tag-warn {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fcd34d;
+}
+.gates {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+}
+.gate-name {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 500;
+}
 
 /* ── panels ── */
 .vn-panel {

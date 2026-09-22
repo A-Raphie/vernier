@@ -102,7 +102,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3">
 
             {/* Left cluster: back button + traffic light + scenario tabs */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto max-w-full pb-1 sm:pb-0" style={{ minWidth: 0 }}>
               <Button
                 variant="outline"
                 size="icon"
@@ -114,7 +114,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               </Button>
 
               {/* 5-Second Traffic Light status dots */}
-              <div style={{
+              <div className="shrink-0" style={{
                 display: 'flex', alignItems: 'center', gap: 5,
                 padding: '4px 8px', borderRadius: 999,
                 background: 'var(--bg)', border: '1px solid var(--border)',
@@ -140,7 +140,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               </div>
 
               {/* Scenarios pills */}
-              <TabsList className="overflow-x-auto">
+              <TabsList className="overflow-x-auto shrink-0 flex-nowrap">
                 {SCENARIOS.map((s) => (
                   <TabsTrigger
                     key={s.id}
@@ -228,281 +228,188 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         </div>
 
         {/* ═════════════════════════════════════════════════════════════════
-            TIER 1: SIMPLE VERDICT (THE 5-SECOND TRAFFIC LIGHT RULE - V5 UNSLOPPED)
+            TIER 1: SIMPLE VERDICT (WINSNZX CALIBRATED REFERENCE PATTERN)
             ═════════════════════════════════════════════════════════════════ */}
         {viewMode === 'simple' ? (
-          <div className="flex flex-col gap-5">
+          <div className="vn-stack" style={{ gap: 16 }}>
 
-            {/* 1. Hero Security Status Strip (Monolithic Containment Bar) */}
-            <div className={`p-4 sm:p-5 rounded-xl border bg-[#0b0f19] flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
-              isDanger
-                ? 'border-white/10 border-l-4 border-l-rose-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),-4px_0_16px_-2px_rgba(244,63,94,0.4)]'
-                : 'border-white/10 border-l-4 border-l-emerald-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),-4px_0_16px_-2px_rgba(16,185,129,0.4)]'
-            }`}>
-              <div className="flex items-center gap-3.5">
-                <div className={`size-10 rounded-lg grid place-items-center shrink-0 ${
-                  isDanger ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                }`}>
-                  {isDanger ? <ShieldAlert className="size-5" /> : <ShieldCheck className="size-5" />}
-                </div>
-                <div>
-                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-white m-0 uppercase font-mono flex items-center gap-2">
-                    {isDanger ? 'Critical Exploit Intercepted' : 'Clean Transaction Verified'}
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold tracking-wider ${
-                      isDanger ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                    }`}>
-                      {isDanger ? 'CONTAINED' : 'CONFORMED'}
-                    </span>
-                  </h2>
-                  <p className="text-xs text-zinc-400 m-0 mt-0.5">
-                    {isDanger
-                      ? 'Signing disabled. Vernier caught an exploit hidden in this calldata before it left your wallet.'
-                      : 'Safe to proceed. Calldata exactly matches declared swap intent.'}
-                  </p>
-                </div>
-              </div>
-
-              {/* High-Precision Tabular Metrics */}
-              <div className="flex items-center gap-5 sm:gap-8 self-end md:self-center shrink-0 border-t md:border-t-0 border-white/5 pt-2 md:pt-0">
-                <div className="text-right">
-                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
-                    Shielded Capital
-                  </div>
-                  <div className={`text-lg sm:text-xl font-mono font-black tabular-nums tracking-tight ${
-                    isDanger ? 'text-white' : 'text-emerald-400'
-                  }`}>
-                    {isDanger ? '$142,000.00' : '$0.00 At Risk'}
-                  </div>
-                </div>
-                <div className="h-8 w-px bg-white/10" />
-                <div className="text-right">
-                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
-                    Verification Time
-                  </div>
-                  <div className="text-lg sm:text-xl font-mono font-black tabular-nums tracking-tight text-cyan-400">
-                    0.42ms
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Comparative Forensic Engine (The Centerpiece) */}
-            <div>
-              <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">
-                Comparative Forensic Engine
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-
-                {/* Left Card: 01 / CLAIMED INTENT */}
-                <div className="rounded-xl border border-white/10 bg-[#0c1017] p-5 sm:p-6 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            {/* 1. Verdict Strip (Modeled after winsznx Notice & Verdict) */}
+            <div className={`vn-panel ${isDanger ? 'border-rose-500/30' : 'border-emerald-500/30'}`} style={{ padding: '16px 20px', borderRadius: 12 }}>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start sm:items-center gap-3">
+                  <span className={`tag shrink-0 ${isDanger ? 'tag-fail' : 'tag-pass'}`} style={{ marginTop: 2 }}>
+                    {isDanger ? 'BLOCKED' : 'VERIFIED'}
+                  </span>
                   <div>
-                    <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
-                      <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400 flex items-center gap-1.5">
-                        <Gift className="size-3 text-zinc-400" />
-                        01 / CLAIMED INTENT
-                      </span>
-                      <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-zinc-400 border border-white/5">
-                        PROMPTED DAPP CLAIM
-                      </span>
+                    <div style={{ fontWeight: 600, fontSize: 16, color: 'var(--ink)' }}>
+                      {isDanger ? 'Malicious Phishing Drain Intercepted' : 'Clean Transaction Conformed'}
                     </div>
-
-                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-2 leading-tight">
-                      {explainer.scamPromise}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
-                      {explainer.scamSubtitle}
-                    </p>
-                  </div>
-
-                  {/* Structured Parameters Table */}
-                  <div className="rounded-lg bg-black/40 border border-white/5 p-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
-                        Purported Reward
-                      </div>
-                      <div className="text-xs font-mono font-bold text-emerald-400 tabular-nums">
-                        {isDanger ? '+$6,500.00' : '+$2,642.50 USDC'}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
-                        Target Contract
-                      </div>
-                      <div className="text-xs font-mono text-zinc-300 truncate" title={activeScenario.intent.targetContract}>
-                        {activeScenario.intent.targetContract.slice(0, 10)}...{activeScenario.intent.targetContract.slice(-4)}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
-                        Method
-                      </div>
-                      <div className="text-xs font-mono text-zinc-300 truncate">
-                        {isDanger ? 'claimAirdrop()' : 'exactInputSingle()'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Card: 02 / ON-CHAIN REALITY */}
-                <div className={`rounded-xl border p-5 sm:p-6 flex flex-col justify-between transition-all ${
-                  isDanger
-                    ? 'border-rose-500/30 bg-[#130d14] shadow-[inset_0_1px_0_rgba(244,63,94,0.15)]'
-                    : 'border-emerald-500/30 bg-[#0c1412] shadow-[inset_0_1px_0_rgba(16,185,129,0.15)]'
-                }`}>
-                  <div>
-                    <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
-                      <span className={`text-[10px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 ${
-                        isDanger ? 'text-rose-400' : 'text-emerald-400'
-                      }`}>
-                        {isDanger ? <AlertTriangle className="size-3" /> : <ShieldCheck className="size-3" />}
-                        02 / ON-CHAIN REALITY
-                      </span>
-                      <span className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded border font-semibold ${
-                        isDanger
-                          ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                          : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
-                      }`}>
-                        {isDanger ? 'VERIFIED CODE MUTATION' : 'VERIFIED CODE CONFORMANCE'}
-                      </span>
-                    </div>
-
-                    <h3 className={`text-xl sm:text-2xl font-bold tracking-tight mb-2 leading-tight ${
-                      isDanger ? 'text-white' : 'text-emerald-100'
-                    }`}>
-                      {explainer.actualAction}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-6">
+                    <div style={{ fontSize: 13, color: 'var(--ink-secondary)', marginTop: 2 }}>
                       {isDanger
-                        ? 'The smart contract grants max approval to an unverified third party. In the next block, transferFrom() will steal every token.'
-                        : 'Standard Uniswap V3 swap router execution with 0.5% max slippage. Zero foreign storage access or unauthorized delegates.'}
-                    </p>
-                  </div>
-
-                  {/* Financial Loss / Gain Block with EIP-712 Interception Seal */}
-                  <div className={`rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
-                    isDanger
-                      ? 'bg-black/50 border-rose-500/30'
-                      : 'bg-black/50 border-emerald-500/30'
-                  }`}>
-                    <div>
-                      <div className={`text-[9px] font-mono uppercase tracking-wider mb-1 font-semibold ${
-                        isDanger ? 'text-rose-400' : 'text-emerald-400'
-                      }`}>
-                        {isDanger ? 'TOTAL FINANCIAL IMPACT' : 'CONFIRMED TRANSACTION OUTCOME'}
-                      </div>
-                      <div className={`text-2xl sm:text-3xl font-mono font-black tracking-tight tabular-nums ${
-                        isDanger ? 'text-rose-400' : 'text-emerald-400'
-                      }`}>
-                        {explainer.victimLoss}
-                      </div>
-                    </div>
-
-                    {/* Official EIP-712 Seal */}
-                    <div className={`px-3 py-2 rounded border flex flex-col items-start sm:items-end justify-center shrink-0 ${
-                      isDanger
-                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-                        : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                    }`}>
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase">
-                        <Lock className="size-3" />
-                        {isDanger ? 'EIP-712 INTERCEPTION SEAL' : 'EIP-712 VERIFIED SEAL'}
-                      </div>
-                      <div className="text-[9px] font-mono text-zinc-400 mt-0.5">
-                        {isDanger ? 'ACTION: SIGNATURE BLOCKED' : 'ACTION: EXECUTION PERMITTED'}
-                      </div>
+                        ? 'Vernier simulated state mutations in 0.42ms and caught an unbounded token drain attempt.'
+                        : 'Parameters conform cleanly to declared swap intent with zero foreign storage access.'}
                     </div>
                   </div>
                 </div>
 
+                <div className="flex items-center gap-6 shrink-0 self-start md:self-auto pt-3 md:pt-0 border-t md:border-t-0 border-slate-800/60 w-full md:w-auto justify-between md:justify-end">
+                  <div className="text-left md:text-right">
+                    <div className="label">Shielded</div>
+                    <div className="value-lg" style={{ color: isDanger ? 'var(--rose)' : 'var(--emerald)', fontSize: 20 }}>
+                      {isDanger ? '$142,000.00' : '$0.00 At Risk'}
+                    </div>
+                  </div>
+                  <div style={{ height: 28, width: 1, background: 'var(--border)' }} />
+                  <div className="text-right">
+                    <div className="label">Latency</div>
+                    <div className="value-lg" style={{ color: 'var(--cyan)', fontSize: 20 }}>
+                      0.42ms
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* 3. Verification & Trace Rail (Bottom Dual Strip) */}
-            <div>
-              <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">
-                Verification & Trace Rail
+            {/* 2. Core Side-by-Side Comparison (Exact pattern from winsznx/kept/ProofRun.tsx) */}
+            <div className="vn-grid-2" style={{ gap: 16 }}>
+              {/* Left Card: Promised by Website */}
+              <div className="vn-panel" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 10, borderRadius: 12 }}>
+                <span className="label">Promised by Website</span>
+                <div className="value-lg">{explainer.scamPromise}</div>
+                <blockquote className="excerpt">“{explainer.scamSubtitle}”</blockquote>
+                
+                <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12, overflow: 'hidden' }}>
+                  <span style={{ color: 'var(--ink-muted)' }}>Target:</span>
+                  <code style={{ fontFamily: 'var(--mono)', color: 'var(--ink-secondary)', wordBreak: 'break-all', fontSize: 11 }}>
+                    {activeScenario.intent.targetContract}
+                  </code>
+                </div>
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                {/* Left Rail: MetaMask Blind Wallet Comparison Accordion */}
-                <div className="rounded-xl border border-white/10 bg-[#0c1017] p-4 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-                  <div
-                    onClick={() => setBlindSignTestActive(!blindSignTestActive)}
-                    className="flex items-center justify-between cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="size-9 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 grid place-items-center shrink-0 group-hover:border-amber-400/40 transition-colors">
-                        <Eye className="size-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">
-                          Standard Blind Wallet vs Vernier's 0.42ms Firewall
-                        </div>
-                        <div className="text-[11px] text-zinc-400">
-                          Compare what MetaMask shows (raw unverified bytecode) vs Vernier simulation
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-xs font-mono text-amber-400 px-2.5 py-1 rounded bg-amber-400/10 border border-amber-400/20 shrink-0">
-                      {blindSignTestActive ? 'Hide' : 'Compare →'}
-                    </span>
-                  </div>
-
-                  {blindSignTestActive && (
-                    <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3 rounded-lg bg-black/60 border border-white/10">
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-[11px] font-bold text-zinc-200">Standard Wallet (Blind Sign)</span>
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">VULNERABLE</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-400 mb-2">User is shown only raw opaque calldata:</p>
-                        <pre className="p-2 rounded bg-black/80 font-mono text-[10px] text-zinc-400 overflow-x-auto select-all break-all leading-tight">
-                          0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9...
-                        </pre>
-                        <div className="mt-2 text-[10px] text-rose-400">⚠️ 0 security warnings. User clicks Sign and loses assets.</div>
-                      </div>
-
-                      <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30">
-                        <div className="flex justify-between items-center mb-1.5">
-                          <span className="text-[11px] font-bold text-white">Vernier 0.42ms Firewall</span>
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">PROTECTED</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-300 mb-2">Simulates full bytecode mutations pre-signature:</p>
-                        <div className="p-2 rounded bg-black/80 font-mono text-[10px] text-emerald-300 border border-emerald-500/20">
-                          ✓ Intercepted: unbounded permit2 allowance detected to foreign drainer.
-                        </div>
-                        <div className="mt-2 text-[10px] text-emerald-400 font-semibold">✓ Signature blocked. $142,000 preserved.</div>
-                      </div>
-                    </div>
-                  )}
+              {/* Right Card: Simulated Execution */}
+              <div className="vn-panel" style={{
+                padding: 22, display: 'flex', flexDirection: 'column', gap: 10, borderRadius: 12,
+                borderColor: isDanger ? 'rgba(244, 63, 94, 0.35)' : 'rgba(16, 185, 129, 0.35)',
+                background: isDanger ? 'rgba(244, 63, 94, 0.03)' : 'rgba(16, 185, 129, 0.03)',
+              }}>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="label" style={{ color: isDanger ? '#fca5a5' : '#6ee7b7' }}>
+                    Simulated On-Chain Execution
+                  </span>
+                  <span className={`tag ${isDanger ? 'tag-fail' : 'tag-pass'}`}>
+                    {isDanger ? 'HAZARD DETECTED' : 'CONFORMING'}
+                  </span>
                 </div>
-
-                {/* Right Rail: Auditor Mode Card Trigger */}
-                <div
-                  onClick={() => setViewMode('auditor')}
-                  className="rounded-xl border border-dashed border-white/20 hover:border-cyan-400/50 bg-[#0c1017]/80 hover:bg-[#0c1017] p-4 flex items-center justify-between cursor-pointer group transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="size-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 grid place-items-center shrink-0 group-hover:border-cyan-400/40 transition-colors">
-                      <Terminal className="size-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                        Auditor Mode: Deep Bytecode & Storage Slot Trace
-                      </div>
-                      <div className="text-[11px] text-zinc-400">
-                        Inspect step-by-step EVM Caliper scrubber, opcode trace, storage slots delta, and EIP-712 state root
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 pl-2">
-                    <span>Open Trace</span>
-                    <ArrowRight className="size-3.5" />
-                  </div>
+                <div className="value-lg" style={{ color: isDanger ? 'var(--rose)' : 'var(--emerald)' }}>
+                  {explainer.victimLoss}
                 </div>
+                <p style={{ fontSize: 13, color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  {explainer.actualAction}
+                </p>
 
+                <div className="vn-row" style={{ marginTop: 'auto', paddingTop: 14, borderTop: '1px solid var(--border)', fontSize: 12 }}>
+                  <span style={{ color: 'var(--ink-muted)' }}>Policy:</span>
+                  <span style={{ color: isDanger ? '#fca5a5' : '#6ee7b7', fontWeight: 600 }}>
+                    {activeScenario.threat.remediation}
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* 3. Safety Gate Stack (Modeled after winsznx/airspace GateStack) */}
+            <div className="vn-panel" style={{ padding: 20, borderRadius: 12 }}>
+              <div className="vn-row-between" style={{ marginBottom: 12 }}>
+                <span className="label">Pre-Execution Safety Verification Gates</span>
+                <span style={{ fontSize: 11, color: 'var(--ink-muted)' }}>Evaluated inside isolated EVM caliper</span>
+              </div>
+              <div className="gates">
+                {activeScenario.threat.vectors.length > 0 ? (
+                  activeScenario.threat.vectors.map((vec, i) => (
+                    <div key={i} className="gate">
+                      <span className="gate-name">{vec}</span>
+                      <span className="tag tag-fail">FAIL</span>
+                    </div>
+                  ))
+                ) : (
+                  <>
+                    <div className="gate">
+                      <span className="gate-name">Price Slippage Boundary Conformance (0.50% max)</span>
+                      <span className="tag tag-pass">PASS</span>
+                    </div>
+                    <div className="gate">
+                      <span className="gate-name">Storage Delta State Shift Containment</span>
+                      <span className="tag tag-pass">PASS</span>
+                    </div>
+                    <div className="gate">
+                      <span className="gate-name">Allowance Recipient Verification</span>
+                      <span className="tag tag-pass">PASS</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* 4. Secondary Rails: Blind Wallet Comparison + Auditor Mode Trigger */}
+            <div className="vn-row-between" style={{ padding: '6px 0', flexWrap: 'wrap', gap: 10 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setBlindSignTestActive(!blindSignTestActive)}
+                className="text-slate-400 hover:text-slate-200 text-xs font-mono"
+                leftIcon={<Eye className="size-3.5 text-amber-400" />}
+              >
+                {blindSignTestActive ? 'Hide MetaMask blind sign comparison' : 'Compare with MetaMask blind sign →'}
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setViewMode('auditor')}
+                className="text-xs font-mono border-slate-800 hover:border-slate-700"
+                leftIcon={<Terminal className="size-3.5 text-cyan-400" />}
+              >
+                Open Auditor Caliper & Bytecode Trace →
+              </Button>
+            </div>
+
+            {/* Interactive Blind Sign Drawer if toggled */}
+            {blindSignTestActive && (
+              <div className="vn-panel" style={{ padding: 18, borderRadius: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="grid-cols-1 md:grid-cols-2">
+                  <div style={{ padding: 14, borderRadius: 8, background: '#131825', border: '1px solid #1e293b' }}>
+                    <div className="vn-row-between" style={{ marginBottom: 6 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#f8fafc' }}>Standard Wallet (MetaMask Blind Sign)</span>
+                      <span className="tag tag-fail">VULNERABLE</span>
+                    </div>
+                    <p style={{ fontSize: 11, color: '#94a3b8', margin: '0 0 6px' }}>User is prompted to sign unverified hex:</p>
+                    <pre style={{
+                      padding: 8, borderRadius: 4, background: '#0b0f19',
+                      fontFamily: 'var(--mono)', fontSize: 10, color: '#cbd5e1',
+                      wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxHeight: 60, overflowY: 'auto',
+                    }}>
+                      0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9...
+                    </pre>
+                    <div style={{ marginTop: 8, fontSize: 11, color: '#fca5a5' }}>
+                      ⚠️ 0 warnings shown. User clicks Confirm and loses $142,000.
+                    </div>
+                  </div>
+
+                  <div style={{ padding: 14, borderRadius: 8, background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                    <div className="vn-row-between" style={{ marginBottom: 6 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink)' }}>Vernier Pre-Execution Intercept</span>
+                      <span className="tag tag-pass">PROTECTED</span>
+                    </div>
+                    <p style={{ fontSize: 11, color: 'var(--ink-secondary)', margin: '0 0 6px' }}>Simulated on-chain in 0.42ms:</p>
+                    <div style={{ padding: 8, borderRadius: 4, background: 'rgba(9, 13, 22, 0.8)', border: '1px solid var(--border)', fontSize: 11, color: 'var(--emerald)' }}>
+                      ✓ Pathogenic Permit2 allowance overwrite caught before signature.
+                    </div>
+                    <div style={{ marginTop: 8, fontSize: 11, color: 'var(--emerald)', fontWeight: 600 }}>
+                      ✓ Signature blocked automatically. $142,000 preserved.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         ) : (
