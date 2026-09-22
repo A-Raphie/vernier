@@ -155,10 +155,16 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                       display: 'inline-block', width: 6, height: 6, borderRadius: '50%', marginRight: 5,
                       background: s.riskLevel === 'CRITICAL' ? 'var(--rose)' : s.riskLevel === 'HIGH' ? 'var(--amber)' : 'var(--emerald)',
                     }} />
-                    {s.id === 'permit2-drain' ? 'Airdrop Scam' : s.id === 'proxy-delegatecall-hijack' ? 'Fake Proxy' : 'Uniswap Swap'}
+                    {s.id === 'permit2-drain' ? 'Airdrop Phishing' : s.id === 'proxy-delegatecall-hijack' ? 'Implementation Hijack' : 'Uniswap Clean'}
                   </TabsTrigger>
                 ))}
               </TabsList>
+
+              {/* Execution Latency Chip */}
+              <div className="hidden lg:flex items-center gap-1.5 font-mono text-[11px] text-cyan-400 bg-cyan-950/30 border border-cyan-500/20 px-2.5 py-1 rounded-md shrink-0">
+                <Zap className="size-3" />
+                <span>0.42ms execution</span>
+              </div>
             </div>
 
             {/* Right cluster: Beginner vs Auditor Mode Toggle + CTA */}
@@ -191,7 +197,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                     color: viewMode === 'auditor' ? 'var(--cyan)' : 'var(--ink-secondary)',
                   }}
                 >
-                  Auditor Mode
+                  Auditor Trace
                 </button>
               </div>
 
@@ -214,7 +220,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                   leftIcon={<ShieldAlert className="size-4" />}
                   className="font-bold uppercase tracking-wider text-xs shadow-lg shadow-rose-950/40"
                 >
-                  {actionConfirmed ? 'Halted' : 'Halt Transaction'}
+                  {actionConfirmed ? 'Halted' : 'Halt Transaction — Prevent Drain'}
                 </Button>
               )}
             </div>
@@ -222,313 +228,279 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         </div>
 
         {/* ═════════════════════════════════════════════════════════════════
-            TIER 1: SIMPLE VERDICT (THE 5-SECOND TRAFFIC LIGHT RULE)
+            TIER 1: SIMPLE VERDICT (THE 5-SECOND TRAFFIC LIGHT RULE - V5 UNSLOPPED)
             ═════════════════════════════════════════════════════════════════ */}
         {viewMode === 'simple' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div className="flex flex-col gap-5">
 
-            {/* 1. Visceral Traffic Light Alert Banner */}
-            <div style={{
-              padding: '18px 24px', borderRadius: 14,
-              border: isDanger ? '1px solid rgba(244, 63, 94, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)',
-              background: isDanger
-                ? 'linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(9, 13, 22, 0.95) 100%)'
-                : 'linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(9, 13, 22, 0.95) 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 280 }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12,
-                  display: 'grid', placeItems: 'center', flexShrink: 0,
-                  background: isDanger ? 'rgba(244, 63, 94, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                  color: isDanger ? 'var(--rose)' : 'var(--emerald)',
-                }}>
-                  {isDanger ? <ShieldAlert size={24} /> : <ShieldCheck size={24} />}
+            {/* 1. Hero Security Status Strip (Monolithic Containment Bar) */}
+            <div className={`p-4 sm:p-5 rounded-xl border bg-[#0b0f19] flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
+              isDanger
+                ? 'border-white/10 border-l-4 border-l-rose-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),-4px_0_16px_-2px_rgba(244,63,94,0.4)]'
+                : 'border-white/10 border-l-4 border-l-emerald-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),-4px_0_16px_-2px_rgba(16,185,129,0.4)]'
+            }`}>
+              <div className="flex items-center gap-3.5">
+                <div className={`size-10 rounded-lg grid place-items-center shrink-0 ${
+                  isDanger ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                }`}>
+                  {isDanger ? <ShieldAlert className="size-5" /> : <ShieldCheck className="size-5" />}
                 </div>
                 <div>
-                  <div style={{
-                    fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
-                    color: isDanger ? 'var(--rose)' : 'var(--emerald)', marginBottom: 2,
-                  }}>
-                    {isDanger ? 'Critical Drain Intercepted' : 'Clean Transaction Verified'}
-                  </div>
-                  <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--ink)' }}>
-                    {isDanger
-                      ? 'Signing disabled. Vernier caught an exploit hidden in this calldata.'
-                      : 'Safe to proceed. Calldata exactly matches declared swap intent.'}
+                  <h2 className="text-base sm:text-lg font-bold tracking-tight text-white m-0 uppercase font-mono flex items-center gap-2">
+                    {isDanger ? 'Critical Exploit Intercepted' : 'Clean Transaction Verified'}
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-semibold tracking-wider ${
+                      isDanger ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                    }`}>
+                      {isDanger ? 'CONTAINED' : 'CONFORMED'}
+                    </span>
                   </h2>
+                  <p className="text-xs text-zinc-400 m-0 mt-0.5">
+                    {isDanger
+                      ? 'Signing disabled. Vernier caught an exploit hidden in this calldata before it left your wallet.'
+                      : 'Safe to proceed. Calldata exactly matches declared swap intent.'}
+                  </p>
                 </div>
               </div>
 
-              {/* Key Quick Facts */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)', textTransform: 'uppercase' }}>
+              {/* High-Precision Tabular Metrics */}
+              <div className="flex items-center gap-5 sm:gap-8 self-end md:self-center shrink-0 border-t md:border-t-0 border-white/5 pt-2 md:pt-0">
+                <div className="text-right">
+                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
                     Shielded Capital
                   </div>
-                  <div style={{
-                    fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 800,
-                    color: isDanger ? '#fca5a5' : 'var(--emerald)',
-                  }}>
+                  <div className={`text-lg sm:text-xl font-mono font-black tabular-nums tracking-tight ${
+                    isDanger ? 'text-white' : 'text-emerald-400'
+                  }`}>
                     {isDanger ? '$142,000.00' : '$0.00 At Risk'}
                   </div>
                 </div>
-                <div style={{ height: 32, width: 1, background: 'var(--border)' }} />
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)', textTransform: 'uppercase' }}>
-                    Simulated In
+                <div className="h-8 w-px bg-white/10" />
+                <div className="text-right">
+                  <div className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider">
+                    Verification Time
                   </div>
-                  <div style={{ fontFamily: 'var(--mono)', fontSize: 20, fontWeight: 800, color: 'var(--cyan)' }}>
+                  <div className="text-lg sm:text-xl font-mono font-black tabular-nums tracking-tight text-cyan-400">
                     0.42ms
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* 2. The 3-Second Visceral Contrast (Promise vs Reality) */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-4 items-stretch">
+            {/* 2. Comparative Forensic Engine (The Centerpiece) */}
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">
+                Comparative Forensic Engine
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 items-stretch">
 
-              {/* Left Card: What the Website Promised */}
-              <div className="vn-panel" style={{ display: 'flex', flexDirection: 'column', borderRadius: 14 }}>
-                <div className="vn-panel-header">
-                  <div className="vn-row" style={{ gap: 8 }}>
-                    <Gift size={14} style={{ color: 'var(--ink-secondary)' }} />
-                    <span className="vn-panel-title">1. What The Website Promised</span>
-                  </div>
-                  <span className="vn-badge vn-badge-neutral">DApp Claim</span>
-                </div>
-                <div style={{ padding: '22px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* Left Card: 01 / CLAIMED INTENT */}
+                <div className="rounded-xl border border-white/10 bg-[#0c1017] p-5 sm:p-6 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                   <div>
-                    <h3 style={{ fontSize: 19, fontWeight: 700, margin: '0 0 8px', color: 'var(--ink)' }}>
+                    <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                      <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400 flex items-center gap-1.5">
+                        <Gift className="size-3 text-zinc-400" />
+                        01 / CLAIMED INTENT
+                      </span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/5 text-zinc-400 border border-white/5">
+                        PROMPTED DAPP CLAIM
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white mb-2 leading-tight">
                       {explainer.scamPromise}
                     </h3>
-                    <p style={{ fontSize: 13, color: 'var(--ink-secondary)', lineHeight: 1.6, margin: '0 0 16px' }}>
+                    <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
                       {explainer.scamSubtitle}
                     </p>
                   </div>
 
-                  <div style={{
-                    padding: '12px 14px', borderRadius: 8,
-                    background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border)',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)', textTransform: 'uppercase' }}>
-                        Expected Wallet Balance
-                      </span>
-                      <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--emerald)' }}>
-                        {isDanger ? '+$6,500.00 Promised' : 'Receive 2,642.50 USDC'}
-                      </span>
+                  {/* Structured Parameters Table */}
+                  <div className="rounded-lg bg-black/40 border border-white/5 p-3.5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
+                        Purported Reward
+                      </div>
+                      <div className="text-xs font-mono font-bold text-emerald-400 tabular-nums">
+                        {isDanger ? '+$6,500.00' : '+$2,642.50 USDC'}
+                      </div>
                     </div>
-                    <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)' }}>
-                      Target: <code style={{ color: 'var(--ink-secondary)' }}>{activeScenario.intent.targetContract}</code>
+                    <div>
+                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
+                        Target Contract
+                      </div>
+                      <div className="text-xs font-mono text-zinc-300 truncate" title={activeScenario.intent.targetContract}>
+                        {activeScenario.intent.targetContract.slice(0, 10)}...{activeScenario.intent.targetContract.slice(-4)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
+                        Method
+                      </div>
+                      <div className="text-xs font-mono text-zinc-300 truncate">
+                        {isDanger ? 'claimAirdrop()' : 'exactInputSingle()'}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Center Divider: Intercept Indicator */}
-              <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                padding: '0 4px',
-              }}>
-                <div style={{
-                  width: 36, height: 36, borderRadius: '50%',
-                  background: isDanger ? 'rgba(244, 63, 94, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                  border: isDanger ? '1px solid var(--rose)' : '1px solid var(--emerald)',
-                  display: 'grid', placeItems: 'center',
-                  color: isDanger ? 'var(--rose)' : 'var(--emerald)',
-                  fontWeight: 800, fontSize: 11, fontFamily: 'var(--mono)',
-                }}>
-                  VS
-                </div>
-              </div>
-
-              {/* Right Card: What Actually Happens */}
-              <div className="vn-panel" style={{
-                display: 'flex', flexDirection: 'column', borderRadius: 14,
-                border: isDanger ? '1px solid rgba(244, 63, 94, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)',
-                background: isDanger ? 'rgba(244, 63, 94, 0.03)' : 'rgba(16, 185, 129, 0.03)',
-              }}>
-                <div className="vn-panel-header" style={{
-                  background: isDanger ? 'rgba(244, 63, 94, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                }}>
-                  <div className="vn-row" style={{ gap: 8 }}>
-                    {isDanger ? <AlertTriangle size={14} style={{ color: 'var(--rose)' }} /> : <ShieldCheck size={14} style={{ color: 'var(--emerald)' }} />}
-                    <span className="vn-panel-title" style={{ color: isDanger ? '#fca5a5' : '#6ee7b7' }}>
-                      2. What Actually Executes
-                    </span>
-                  </div>
-                  <span className={`vn-badge ${isDanger ? 'vn-badge-critical' : 'vn-badge-clean'}`}>
-                    {isDanger ? '🚨 Malicious Code' : '✓ Clean Route'}
-                  </span>
-                </div>
-                <div style={{ padding: '22px 24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                {/* Right Card: 02 / ON-CHAIN REALITY */}
+                <div className={`rounded-xl border p-5 sm:p-6 flex flex-col justify-between transition-all ${
+                  isDanger
+                    ? 'border-rose-500/30 bg-[#130d14] shadow-[inset_0_1px_0_rgba(244,63,94,0.15)]'
+                    : 'border-emerald-500/30 bg-[#0c1412] shadow-[inset_0_1px_0_rgba(16,185,129,0.15)]'
+                }`}>
                   <div>
-                    <h3 style={{
-                      fontSize: 19, fontWeight: 700, margin: '0 0 8px',
-                      color: isDanger ? '#fca5a5' : '#6ee7b7',
-                    }}>
+                    <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                      <span className={`text-[10px] font-mono uppercase tracking-wider font-semibold flex items-center gap-1.5 ${
+                        isDanger ? 'text-rose-400' : 'text-emerald-400'
+                      }`}>
+                        {isDanger ? <AlertTriangle className="size-3" /> : <ShieldCheck className="size-3" />}
+                        02 / ON-CHAIN REALITY
+                      </span>
+                      <span className={`text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded border font-semibold ${
+                        isDanger
+                          ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                          : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                      }`}>
+                        {isDanger ? 'VERIFIED CODE MUTATION' : 'VERIFIED CODE CONFORMANCE'}
+                      </span>
+                    </div>
+
+                    <h3 className={`text-xl sm:text-2xl font-bold tracking-tight mb-2 leading-tight ${
+                      isDanger ? 'text-white' : 'text-emerald-100'
+                    }`}>
                       {explainer.actualAction}
                     </h3>
-                    <p style={{ fontSize: 13, color: 'var(--ink-secondary)', lineHeight: 1.6, margin: '0 0 16px' }}>
+                    <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-6">
                       {isDanger
                         ? 'The smart contract grants max approval to an unverified third party. In the next block, transferFrom() will steal every token.'
-                        : 'Standard Uniswap V3 swap router execution with 0.5% max slippage. Zero foreign storage access.'}
+                        : 'Standard Uniswap V3 swap router execution with 0.5% max slippage. Zero foreign storage access or unauthorized delegates.'}
                     </p>
                   </div>
 
-                  <div style={{
-                    padding: '12px 14px', borderRadius: 8,
-                    background: isDanger ? 'rgba(244, 63, 94, 0.08)' : 'rgba(16, 185, 129, 0.08)',
-                    border: isDanger ? '1px solid rgba(244, 63, 94, 0.25)' : '1px solid rgba(16, 185, 129, 0.25)',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <span style={{
-                        fontFamily: 'var(--mono)', fontSize: 10, textTransform: 'uppercase',
-                        color: isDanger ? '#fca5a5' : '#6ee7b7', fontWeight: 600,
-                      }}>
-                        Actual Financial Outcome
-                      </span>
-                      <span style={{
-                        fontFamily: 'var(--mono)', fontSize: 14, fontWeight: 800,
-                        color: isDanger ? 'var(--rose)' : 'var(--emerald)',
-                      }}>
+                  {/* Financial Loss / Gain Block with EIP-712 Interception Seal */}
+                  <div className={`rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border ${
+                    isDanger
+                      ? 'bg-black/50 border-rose-500/30'
+                      : 'bg-black/50 border-emerald-500/30'
+                  }`}>
+                    <div>
+                      <div className={`text-[9px] font-mono uppercase tracking-wider mb-1 font-semibold ${
+                        isDanger ? 'text-rose-400' : 'text-emerald-400'
+                      }`}>
+                        {isDanger ? 'TOTAL FINANCIAL IMPACT' : 'CONFIRMED TRANSACTION OUTCOME'}
+                      </div>
+                      <div className={`text-2xl sm:text-3xl font-mono font-black tracking-tight tabular-nums ${
+                        isDanger ? 'text-rose-400' : 'text-emerald-400'
+                      }`}>
                         {explainer.victimLoss}
-                      </span>
+                      </div>
                     </div>
-                    <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: isDanger ? '#fca5a5' : 'var(--emerald)' }}>
-                      Policy: <strong>{activeScenario.threat.remediation}</strong>
+
+                    {/* Official EIP-712 Seal */}
+                    <div className={`px-3 py-2 rounded border flex flex-col items-start sm:items-end justify-center shrink-0 ${
+                      isDanger
+                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                        : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                    }`}>
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold tracking-wider uppercase">
+                        <Lock className="size-3" />
+                        {isDanger ? 'EIP-712 INTERCEPTION SEAL' : 'EIP-712 VERIFIED SEAL'}
+                      </div>
+                      <div className="text-[9px] font-mono text-zinc-400 mt-0.5">
+                        {isDanger ? 'ACTION: SIGNATURE BLOCKED' : 'ACTION: EXECUTION PERMITTED'}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
+              </div>
             </div>
 
-            {/* 3. Interactive MetaMask Blind Sign Simulator (Why Users Need Vernier) */}
-            <div className="vn-panel" style={{ borderRadius: 14, overflow: 'hidden' }}>
-              <div style={{
-                padding: '14px 20px', background: 'rgba(11, 15, 25, 0.8)',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12,
-                borderBottom: blindSignTestActive ? '1px solid var(--border)' : 'none',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Eye size={16} style={{ color: 'var(--amber)' }} />
-                  <div>
-                    <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--ink)' }}>
-                      Educational Simulator: What MetaMask Shows Without Vernier
+            {/* 3. Verification & Trace Rail (Bottom Dual Strip) */}
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-zinc-500 mb-2 px-1">
+                Verification & Trace Rail
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                {/* Left Rail: MetaMask Blind Wallet Comparison Accordion */}
+                <div className="rounded-xl border border-white/10 bg-[#0c1017] p-4 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                  <div
+                    onClick={() => setBlindSignTestActive(!blindSignTestActive)}
+                    className="flex items-center justify-between cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="size-9 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 grid place-items-center shrink-0 group-hover:border-amber-400/40 transition-colors">
+                        <Eye className="size-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">
+                          Standard Blind Wallet vs Vernier's 0.42ms Firewall
+                        </div>
+                        <div className="text-[11px] text-zinc-400">
+                          Compare what MetaMask shows (raw unverified bytecode) vs Vernier simulation
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono text-amber-400 px-2.5 py-1 rounded bg-amber-400/10 border border-amber-400/20 shrink-0">
+                      {blindSignTestActive ? 'Hide' : 'Compare →'}
                     </span>
-                    <p style={{ margin: 0, fontSize: 11, color: 'var(--ink-muted)' }}>
-                      See how standard wallets deceive users by displaying harmless UI while asking to sign unreadable hex.
-                    </p>
                   </div>
+
+                  {blindSignTestActive && (
+                    <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3 rounded-lg bg-black/60 border border-white/10">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-[11px] font-bold text-zinc-200">Standard Wallet (Blind Sign)</span>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">VULNERABLE</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-400 mb-2">User is shown only raw opaque calldata:</p>
+                        <pre className="p-2 rounded bg-black/80 font-mono text-[10px] text-zinc-400 overflow-x-auto select-all break-all leading-tight">
+                          0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9...
+                        </pre>
+                        <div className="mt-2 text-[10px] text-rose-400">⚠️ 0 security warnings. User clicks Sign and loses assets.</div>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-[11px] font-bold text-white">Vernier 0.42ms Firewall</span>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">PROTECTED</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-300 mb-2">Simulates full bytecode mutations pre-signature:</p>
+                        <div className="p-2 rounded bg-black/80 font-mono text-[10px] text-emerald-300 border border-emerald-500/20">
+                          ✓ Intercepted: unbounded permit2 allowance detected to foreign drainer.
+                        </div>
+                        <div className="mt-2 text-[10px] text-emerald-400 font-semibold">✓ Signature blocked. $142,000 preserved.</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setBlindSignTestActive(!blindSignTestActive)}
-                  className="font-mono text-xs"
+                {/* Right Rail: Auditor Mode Card Trigger */}
+                <div
+                  onClick={() => setViewMode('auditor')}
+                  className="rounded-xl border border-dashed border-white/20 hover:border-cyan-400/50 bg-[#0c1017]/80 hover:bg-[#0c1017] p-4 flex items-center justify-between cursor-pointer group transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
                 >
-                  {blindSignTestActive ? 'Hide MetaMask View' : 'Compare with MetaMask'}
-                </Button>
-              </div>
-
-              {blindSignTestActive && (
-                <div style={{ padding: '20px 24px', background: 'rgba(9, 13, 22, 0.6)' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }} className="grid-cols-1 md:grid-cols-2">
-                    {/* Normal Wallet Simulation */}
-                    <div style={{
-                      padding: 16, borderRadius: 10,
-                      background: '#1a1f2c', border: '1px solid #334155',
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: '#f8fafc' }}>
-                          Standard Wallet Prompt (Blind Sign)
-                        </span>
-                        <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#ef4444', color: '#fff', fontWeight: 700 }}>
-                          VULNERABLE
-                        </span>
-                      </div>
-                      <p style={{ fontSize: 11, color: '#94a3b8', marginBottom: 8 }}>
-                        Without Vernier, you are shown only raw unverified calldata:
-                      </p>
-                      <pre style={{
-                        padding: 10, borderRadius: 6, background: '#0f172a',
-                        fontFamily: 'var(--mono)', fontSize: 10, color: '#cbd5e1',
-                        wordBreak: 'break-all', whiteSpace: 'pre-wrap', maxHeight: 80, overflowY: 'auto',
-                      }}>
-                        0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff...
-                      </pre>
-                      <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 10, color: '#ef4444' }}>⚠️ 0 warnings shown</span>
-                        <span style={{ fontSize: 10, color: '#94a3b8', fontStyle: 'italic' }}>User signs & loses $142,000</span>
-                      </div>
+                  <div className="flex items-center gap-3">
+                    <div className="size-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 grid place-items-center shrink-0 group-hover:border-cyan-400/40 transition-colors">
+                      <Terminal className="size-4" />
                     </div>
-
-                    {/* Vernier Active Simulation */}
-                    <div style={{
-                      padding: 16, borderRadius: 10,
-                      background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.3)',
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>
-                          Vernier Pre-Execution Intercept
-                        </span>
-                        <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(16, 185, 129, 0.2)', color: 'var(--emerald)', fontWeight: 700 }}>
-                          PROTECTED
-                        </span>
+                    <div>
+                      <div className="text-xs sm:text-sm font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                        Auditor Mode: Deep Bytecode & Storage Slot Trace
                       </div>
-                      <p style={{ fontSize: 11, color: 'var(--ink-secondary)', marginBottom: 8 }}>
-                        Vernier simulates state mutations in a sandboxed EVM in 0.42ms:
-                      </p>
-                      <div style={{
-                        padding: 10, borderRadius: 6, background: 'rgba(9, 13, 22, 0.9)',
-                        border: '1px solid var(--border)', fontSize: 11, color: 'var(--ink)',
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--rose)', fontWeight: 700, marginBottom: 4 }}>
-                          <XCircle size={14} /> Signature disabled automatically
-                        </div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-muted)' }}>
-                          Identified type(uint256).max approval redirecting to drainer recipient.
-                        </div>
-                      </div>
-                      <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: 10, color: 'var(--emerald)', fontWeight: 600 }}>✓ $142,000 Saved</span>
-                        <span style={{ fontSize: 10, color: 'var(--cyan)', fontFamily: 'var(--mono)' }}>0.42ms EVM Caliper</span>
+                      <div className="text-[11px] text-zinc-400">
+                        Inspect step-by-step EVM Caliper scrubber, opcode trace, storage slots delta, and EIP-712 state root
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* 4. Secondary Auditor Drawer Teaser (Never blocking front door) */}
-            <div
-              onClick={() => setViewMode('auditor')}
-              style={{
-                padding: '16px 20px', borderRadius: 12, cursor: 'pointer',
-                background: 'rgba(15, 23, 42, 0.4)', border: '1px dashed var(--border-hover)',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                transition: 'all 150ms ease',
-              }}
-              className="hover:border-slate-500 hover:bg-slate-900/50"
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Terminal size={18} style={{ color: 'var(--cyan)' }} />
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>
-                    Need low-level proof? Switch to Auditor Mode
-                  </div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-muted)' }}>
-                    Inspect step-by-step EVM Caliper scrubber, bytecode opcode trace, storage slots delta, and EIP-712 state root attestation.
+                  <div className="flex items-center gap-1.5 text-xs font-mono font-semibold text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 pl-2">
+                    <span>Open Trace</span>
+                    <ArrowRight className="size-3.5" />
                   </div>
                 </div>
-              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--cyan)', fontSize: 12, fontWeight: 600 }}>
-                <span>Open Auditor Trace</span>
-                <ArrowRight size={14} />
               </div>
             </div>
 
