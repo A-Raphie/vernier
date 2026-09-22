@@ -33,6 +33,16 @@ export interface CryptographicReceipt {
   simulatedBlockHash: string;
 }
 
+export interface PlainEnglishExplainer {
+  scamPromise: string;
+  scamSubtitle: string;
+  actualAction: string;
+  victimLoss: string;
+  vernierAction: string;
+  assetsProtected: string;
+  whyThisMatters: string;
+}
+
 export interface SimulationScenario {
   id: string;
   name: string;
@@ -58,4 +68,5 @@ export interface SimulationScenario {
   opcodeTrace: OpcodeStep[];
   threat: ThreatDetail;
   receipt: CryptographicReceipt;
+  plainEnglish?: PlainEnglishExplainer;
 }

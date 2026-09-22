@@ -1,14 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SimulationScenario } from '../../lib/types';
 import { SCENARIOS } from '../../data/attack-vectors';
 import { IntentCharter } from '../console/IntentCharter';
 import { VernierRadar } from '../console/VernierRadar';
 import { BytecodeTrace } from '../console/BytecodeTrace';
 import { ReceiptRail } from '../proof/ReceiptRail';
+import { JudgeHumanMode } from '../console/JudgeHumanMode';
 import { SurfaceTab } from '../navigation/ChromeHeader';
-import { ArrowLeft, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, UserCheck, Binary, Sliders } from 'lucide-react';
 
 interface Surface2CockpitProps {
   selectedScenarioId: string;
@@ -25,6 +26,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
   setActiveStepIndex,
   onNavigateTab,
 }) => {
+  const [cockpitViewMode, setCockpitViewMode] = useState<'human' | 'auditor'>('human');
   const activeScenario = SCENARIOS.find((s) => s.id === selectedScenarioId) || SCENARIOS[0];
   const isCritical = activeScenario.riskLevel === 'CRITICAL';
   const isClean = activeScenario.riskLevel === 'CLEAN';
@@ -32,7 +34,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
   return (
     <div className="py-8 px-4 lg:px-8 bg-[#090d16] flex-1 space-y-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Top Cockpit Bar: Back to Overview + Hero Metric + Scenario Switcher */}
+        {/* Top Cockpit Bar: Back to Overview + Hero Metric + Scenario Switcher + View Mode Toggle */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
           <div className="flex items-center gap-3">
             <button
@@ -55,24 +57,52 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             </div>
           </div>
 
-          {/* Scenario Switcher Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded border border-[#1e293b] bg-[#0e131f]">
-            {SCENARIOS.map((s) => (
+          <div className="flex flex-wrap items-center gap-3">
+            {/* View Mode Switcher: Plain English (Judge) vs Deep Metrology (Auditor) */}
+            <div className="flex items-center gap-1 p-1 rounded-lg border border-amber-500/40 bg-[#0e131f]">
               <button
-                key={s.id}
-                onClick={() => onSelectScenario(s.id)}
-                className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                  s.id === selectedScenarioId
-                    ? 'bg-[#151c2e] text-white border border-slate-700 font-medium'
+                onClick={() => setCockpitViewMode('human')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
+                  cockpitViewMode === 'human'
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                <span className={`inline-block size-1.5 rounded-full mr-1.5 ${
-                  s.riskLevel === 'CRITICAL' ? 'bg-rose-500' : s.riskLevel === 'HIGH' ? 'bg-amber-400' : 'bg-emerald-400'
-                }`} />
-                {s.name.split(' ')[0]}
+                <UserCheck className="size-3.5" />
+                <span>Plain English (Judge Mode)</span>
               </button>
-            ))}
+              <button
+                onClick={() => setCockpitViewMode('auditor')}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
+                  cockpitViewMode === 'auditor'
+                    ? 'bg-[#151c2e] text-white border border-slate-700 font-semibold'
+                    : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Binary className="size-3.5" />
+                <span>Deep Metrology (Auditor Mode)</span>
+              </button>
+            </div>
+
+            {/* Scenario Switcher Tabs */}
+            <div className="flex items-center gap-1.5 p-1 rounded border border-[#1e293b] bg-[#0e131f]">
+              {SCENARIOS.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => onSelectScenario(s.id)}
+                  className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
+                    s.id === selectedScenarioId
+                      ? 'bg-[#151c2e] text-white border border-slate-700 font-medium'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <span className={`inline-block size-1.5 rounded-full mr-1.5 ${
+                    s.riskLevel === 'CRITICAL' ? 'bg-rose-500' : s.riskLevel === 'HIGH' ? 'bg-amber-400' : 'bg-emerald-400'
+                  }`} />
+                  {s.name.split(' ')[0]}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -112,32 +142,41 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
           </div>
         </div>
 
-        {/* 3-Column Working Cockpit Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Intent Charter & Risk Gauge (3 cols) */}
-          <div className="lg:col-span-3">
-            <IntentCharter scenario={activeScenario} />
-          </div>
+        {/* Render either Judge Human Mode (Default) or Deep Metrology Mode */}
+        {cockpitViewMode === 'human' ? (
+          <JudgeHumanMode
+            scenario={activeScenario}
+            onNavigateTab={onNavigateTab}
+            onSwitchToAuditorMode={() => setCockpitViewMode('auditor')}
+          />
+        ) : (
+          /* 3-Column Working Cockpit Grid (Auditor Metrology Mode) */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left Column: Intent Charter & Risk Gauge (3 cols) */}
+            <div className="lg:col-span-3">
+              <IntentCharter scenario={activeScenario} />
+            </div>
 
-          {/* Center Column: Vernier Time-Travel Caliper & Storage Slot Inspector (6 cols) */}
-          <div className="lg:col-span-6">
-            <VernierRadar
-              scenario={activeScenario}
-              activeStepIndex={activeStepIndex}
-              setActiveStepIndex={setActiveStepIndex}
-            />
-          </div>
+            {/* Center Column: Vernier Time-Travel Caliper & Storage Slot Inspector (6 cols) */}
+            <div className="lg:col-span-6">
+              <VernierRadar
+                scenario={activeScenario}
+                activeStepIndex={activeStepIndex}
+                setActiveStepIndex={setActiveStepIndex}
+              />
+            </div>
 
-          {/* Right Column: Bytecode Trace & Action Proof Rail (3 cols) */}
-          <div className="lg:col-span-3 flex flex-col gap-4">
-            <BytecodeTrace
-              opcodes={activeScenario.opcodeTrace}
-              activeStepIndex={activeStepIndex}
-              onSelectStep={setActiveStepIndex}
-            />
-            <ReceiptRail scenario={activeScenario} />
+            {/* Right Column: Bytecode Trace & Action Proof Rail (3 cols) */}
+            <div className="lg:col-span-3 flex flex-col gap-4">
+              <BytecodeTrace
+                opcodes={activeScenario.opcodeTrace}
+                activeStepIndex={activeStepIndex}
+                onSelectStep={setActiveStepIndex}
+              />
+              <ReceiptRail scenario={activeScenario} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

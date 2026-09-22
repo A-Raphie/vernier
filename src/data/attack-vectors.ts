@@ -87,6 +87,15 @@ export const SCENARIOS: SimulationScenario[] = [
       gasSaved: '139,500 units',
       simulatedBlockHash: '0xd7a23f1...e992b4',
     },
+    plainEnglish: {
+      scamPromise: 'Claim 2.5 ETH Free Staking Airdrop',
+      scamSubtitle: 'The phishing website promises you a $6,500 reward and asks you to click "Claim" to receive it.',
+      actualAction: 'Grants unlimited token access (max approval) to the attacker’s wallet (0x4e6b...2ab9).',
+      victimLoss: 'All tokens in your wallet (USDC, USDT, WETH) worth $142,000 are stolen in the next block.',
+      vernierAction: 'Vernier simulated the bytecode in 0.42ms, detected the malicious Permit2 allowance overwrite, and blocked the signature.',
+      assetsProtected: '$142,000 in ERC-20 Tokens Saved',
+      whyThisMatters: 'Normal wallets only display cryptic hex data. Vernier reads what the contract actually touches and tells you in plain English before you lose everything.',
+    },
   },
   {
     id: 'proxy-delegatecall-hijack',
@@ -160,6 +169,15 @@ export const SCENARIOS: SimulationScenario[] = [
       gasSaved: '150,000 units',
       simulatedBlockHash: '0xd7a23f1...e992b4',
     },
+    plainEnglish: {
+      scamPromise: 'Compound Yield (10 ETH Yield Rebalance)',
+      scamSubtitle: 'The vault claims to automatically compound your yield across DeFi lending protocols.',
+      actualAction: 'Stealthily executes a DELEGATECALL that rewrites the smart contract admin slot and replaces the implementation logic with a malicious drainer.',
+      victimLoss: '10 ETH deposited by user plus entire protocol TVL stolen by unauthorized admin takeover.',
+      vernierAction: 'Vernier caught an illegal mutation attempt on ERC-1967 implementation slot 0x3608...8bbc and aborted execution.',
+      assetsProtected: '10.0 ETH ($26,425 USD) Saved',
+      whyThisMatters: 'Smart contract upgrade hacks look identical to normal compound transactions. Vernier inspects storage slot mutations before you authorize.',
+    },
   },
   {
     id: 'uniswap-v3-swap',
@@ -227,6 +245,15 @@ export const SCENARIOS: SimulationScenario[] = [
       timestamp: '2026-09-22T09:32:30Z',
       gasSaved: '0 units (Conforming)',
       simulatedBlockHash: '0xd7a23f1...e992b4',
+    },
+    plainEnglish: {
+      scamPromise: 'Swap 1.0 WETH for 2,642.50 USDC',
+      scamSubtitle: 'Standard decentralized exchange trade on Uniswap V3 SwapRouter.',
+      actualAction: 'Deducts 1.0 WETH and deposits 2,642.50 USDC directly into your wallet with 0.5% max slippage.',
+      victimLoss: '$0 (Completely safe and legitimate transaction)',
+      vernierAction: 'All simulated storage deltas matched the declared intent. Vernier stamped the transaction as SAFE_TO_SIGN.',
+      assetsProtected: 'Safe Transaction Conformance',
+      whyThisMatters: 'A good firewall must not produce false alarms. When a transaction is legitimate, Vernier lets it pass with zero friction.',
     },
   },
 ];

@@ -29,18 +29,19 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
           {/* Beat 1: Monospace Protocol Eyebrow */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-700/80 bg-[#151c2e] text-slate-300 font-mono text-xs">
             <span className="size-1.5 rounded-full bg-amber-400" />
-            <span>3RD-WEB-HACK 2026 · EIP-712 PRE-EXECUTION FIREWALL STANDARD</span>
+            <span>3RD-WEB-HACK 2026 · WEB3 TRANSACTION FIREWALL</span>
           </div>
 
           {/* Beat 2: Two-Clause Headline (First clause 100%, second clause ~45% opacity) */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight font-sans text-balance leading-[1.12]">
-            <span className="text-white">Measure state deltas</span> <br />
-            <span className="text-slate-500">before your wallet signs.</span>
+            <span className="text-white">Stop signing transactions blind.</span> <br />
+            <span className="text-slate-500">Vernier simulates the damage first.</span>
           </h1>
 
           {/* Beat 3: Lede (52-65ch wide) */}
           <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed text-pretty font-sans">
-            Simulating EVM bytecode, storage slot mutations, and hidden wallet drainers before raw calldata touches the network.
+            Scam websites hide wallet drainers behind innocent buttons like &ldquo;Claim Airdrop&rdquo;. 
+            Vernier simulates raw bytecode in a private 0.42ms browser sandbox to show what actually leaves your wallet before you press Confirm.
           </p>
 
           {/* Beat 4: CTA Pair */}
@@ -89,26 +90,35 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                 </div>
               </div>
 
-              {/* Intercept Data Summary */}
+              {/* Intercept Data Summary: Promised vs Reality */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
-                <div className="p-3 rounded border border-slate-800/80 bg-[#090d16] space-y-1">
-                  <div className="text-[10px] text-slate-500 uppercase">HUMAN INTENT PROMISE</div>
-                  <div className="text-slate-200 font-semibold truncate">{activeScenario.intent.amount}</div>
-                  <div className="text-[11px] text-slate-400">{activeScenario.intent.protocol}</div>
+                <div className="p-3.5 rounded border border-slate-800/80 bg-[#090d16] space-y-1.5">
+                  <div className="text-[10px] text-slate-500 uppercase flex items-center gap-1">
+                    <span>1. PROMISED BY WEBSITE</span>
+                  </div>
+                  <div className="text-slate-100 font-bold truncate font-sans">
+                    {activeScenario.plainEnglish?.scamPromise || activeScenario.intent.amount}
+                  </div>
+                  <div className="text-[11px] text-slate-400 font-sans line-clamp-2">
+                    {activeScenario.plainEnglish?.scamSubtitle || activeScenario.intent.protocol}
+                  </div>
                 </div>
 
-                <div className="p-3 rounded border border-slate-800/80 bg-[#090d16] space-y-1">
-                  <div className="text-[10px] text-slate-500 uppercase">VERNIER METROLOGY SCAN</div>
+                <div className="p-3.5 rounded border border-slate-800/80 bg-[#090d16] space-y-1.5">
+                  <div className="text-[10px] text-slate-500 uppercase flex items-center justify-between">
+                    <span>2. VERNIER FIREWALL VERDICT</span>
+                    <span className="text-[10px] text-cyan-400 font-mono">0.42ms</span>
+                  </div>
                   <div className="flex items-center justify-between">
-                    <span className={isCritical ? 'text-rose-400 font-bold' : isClean ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
-                      {activeScenario.riskLevel} ({activeScenario.riskScore}/100)
+                    <span className={isCritical ? 'text-rose-400 font-bold font-sans' : isClean ? 'text-emerald-400 font-bold font-sans' : 'text-amber-400 font-bold font-sans'}>
+                      {isClean ? 'SAFE TO SIGN' : 'CRITICAL THREAT BLOCKED'}
                     </span>
                     <span className="text-[10px] text-slate-500 tabular-nums">
                       {activeScenario.metrics.storageSlotsTouched} slots touched
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-400 truncate">
-                    {isClean ? 'Clean execution path' : 'Pathogenic SSTORE detected'}
+                  <div className="text-[11px] text-slate-300 font-sans line-clamp-2">
+                    {activeScenario.plainEnglish?.actualAction || 'Pathogenic SSTORE detected'}
                   </div>
                 </div>
               </div>
@@ -117,23 +127,23 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 text-xs font-mono">
                 <div className="flex items-center gap-2">
                   {isClean ? (
-                    <span className="flex items-center gap-1.5 text-emerald-400">
+                    <span className="flex items-center gap-1.5 text-emerald-400 font-sans">
                       <CheckCircle2 className="size-3.5" />
-                      <span>Conforms to declared swap intent</span>
+                      <span>Legitimate transaction · Safe to sign</span>
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 text-rose-400">
+                    <span className="flex items-center gap-1.5 text-rose-400 font-sans">
                       <ShieldAlert className="size-3.5" />
-                      <span>Intercepted: SSTORE type(uint256).max</span>
+                      <span>Drainer halted: {activeScenario.plainEnglish?.assetsProtected || 'Assets protected'}</span>
                     </span>
                   )}
                 </div>
 
                 <button
                   onClick={() => onNavigateTab('cockpit')}
-                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 font-semibold cursor-pointer ml-auto"
+                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 font-semibold cursor-pointer ml-auto font-mono text-xs"
                 >
-                  <span>REPLAY IN COCKPIT</span>
+                  <span>SEE JUDGE WALKTHROUGH</span>
                   <ChevronRight className="size-3.5" />
                 </button>
               </div>
@@ -160,6 +170,51 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
       {/* 3-Card Economic Friction Grid */}
       <EconomicGrid />
+
+      {/* Beginner & Judge Friendly FAQ / Explainer Section */}
+      <section className="py-14 px-4 lg:px-8 border-b border-[#1e293b] bg-[#0c101c]">
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <span className="font-mono text-xs uppercase tracking-widest text-cyan-400 font-semibold">
+              Explain Like I&apos;m 5
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white font-sans">
+              What does Vernier actually do?
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto font-sans">
+              Why this solves the #1 reason normal people and treasuries lose money in Web3.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
+              <div className="text-amber-400 font-mono text-xs font-bold">THE PROBLEM</div>
+              <h3 className="font-sans font-bold text-sm text-slate-100">Blind Signatures</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                When you interact with a dApp, your wallet only displays cryptic gibberish like <code className="text-slate-300">0x095ea7b3</code>. 
+                You have to trust the website isn&apos;t stealing your tokens.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
+              <div className="text-cyan-400 font-mono text-xs font-bold">THE SOLUTION</div>
+              <h3 className="font-sans font-bold text-sm text-slate-100">0.4ms Local Simulation</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                Before your wallet shows the &ldquo;Confirm&rdquo; button, Vernier spins up an instantaneous private EVM inside your browser. 
+                It watches every balance and permission that would change.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-lg border border-slate-800 bg-[#090d16] space-y-2">
+              <div className="text-emerald-400 font-mono text-xs font-bold">THE RESULT</div>
+              <h3 className="font-sans font-bold text-sm text-slate-100">Plain English Verdicts</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                Instead of confusing hex codes, you see: <em>&ldquo;Warning: This website claims to claim an airdrop, but it will empty your USDC balance.&rdquo;</em>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 4-Step Pipeline Architecture Section */}
       <section className="py-16 px-4 lg:px-8 border-b border-[#1e293b] bg-[#090d16]">
