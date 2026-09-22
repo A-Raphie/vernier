@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sliders, Fuel, Database, ShieldAlert, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
+import { Sliders, Fuel, Database, ShieldAlert, SkipBack, SkipForward } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
 import { Button, Badge, Card } from '../ui';
 
@@ -15,22 +15,23 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
   setActiveStepIndex,
 }) => {
   const totalSteps = scenario.opcodeTrace.length;
-  const currentOpcode = scenario.opcodeTrace[activeStepIndex] || scenario.opcodeTrace[0];
-  const isHazardStep = currentOpcode.isBlocked || (activeStepIndex === totalSteps - 1 && scenario.riskScore > 40);
+  const safeIndex = Math.min(Math.max(0, activeStepIndex), totalSteps - 1);
+  const currentOpcode = scenario.opcodeTrace[safeIndex] || scenario.opcodeTrace[0];
+  const isHazardStep = currentOpcode.isBlocked || (safeIndex === totalSteps - 1 && scenario.riskScore > 40);
 
   const isCritical = scenario.riskLevel === 'CRITICAL';
   const isHigh = scenario.riskLevel === 'HIGH';
 
   const handlePrev = () => {
-    setActiveStepIndex(Math.max(0, activeStepIndex - 1));
+    setActiveStepIndex(Math.max(0, safeIndex - 1));
   };
 
   const handleNext = () => {
-    setActiveStepIndex(Math.min(totalSteps - 1, activeStepIndex + 1));
+    setActiveStepIndex(Math.min(totalSteps - 1, safeIndex + 1));
   };
 
   // Calculate cumulative gas simulated up to this step
-  const gasFraction = (activeStepIndex + 1) / totalSteps;
+  const gasFraction = (safeIndex + 1) / totalSteps;
   const currentGas = Math.round(scenario.metrics.gasSimulated * gasFraction);
 
   return (
@@ -40,11 +41,11 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
         <div className="flex items-center gap-2">
           <Sliders className="size-3.5 text-amber-400" />
           <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200">
-            TIME-TRAVEL EXECUTION SCRUBBER
+            EXECUTION STEP SCRUBBER
           </span>
         </div>
         <div className="flex items-center gap-3 font-mono text-[11px] text-slate-400">
-          <span>STEP <strong className="text-slate-200 tabular-nums">{activeStepIndex + 1}</strong> OF <strong className="text-slate-200 tabular-nums">{totalSteps}</strong></span>
+          <span>STEP <strong className="text-slate-200 tabular-nums">{safeIndex + 1}</strong> OF <strong className="text-slate-200 tabular-nums">{totalSteps}</strong></span>
           <span>GAS: <strong className="text-amber-300 tabular-nums">{currentGas.toLocaleString()}</strong></span>
         </div>
       </div>
@@ -53,14 +54,14 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
       <div className="p-3.5 rounded border border-slate-800 bg-[#090d16] space-y-2.5">
         <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
           <span className="text-slate-300 font-medium">
-            VERNIER STEP CALIPER
+            CALIPER STEP CONTROLS
           </span>
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               size="icon"
               onClick={handlePrev}
-              disabled={activeStepIndex === 0}
+              disabled={safeIndex === 0}
               aria-label="Previous execution step"
               className="size-7"
             >
@@ -70,7 +71,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
               variant="secondary"
               size="icon"
               onClick={handleNext}
-              disabled={activeStepIndex === totalSteps - 1}
+              disabled={safeIndex === totalSteps - 1}
               aria-label="Next execution step"
               className="size-7"
             >
@@ -99,7 +100,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
             type="range"
             min="0"
             max={totalSteps - 1}
-            value={activeStepIndex}
+            value={safeIndex}
             onChange={(e) => setActiveStepIndex(Number(e.target.value))}
             className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-full z-10"
             aria-label="Vernier Step Scrubber"
@@ -108,7 +109,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
           {/* Sliding Caliper Vernier Cursor */}
           <div
             className="absolute top-0 bottom-0 w-20 border-x border-amber-400/80 bg-amber-500/10 flex items-center justify-center pointer-events-none transition-all duration-75"
-            style={{ left: `calc(${(activeStepIndex / (totalSteps - 1)) * 92}% - 4px)` }}
+            style={{ left: `calc(${(safeIndex / Math.max(1, totalSteps - 1)) * 92}% - 4px)` }}
           >
             <div className="w-[1.5px] h-full bg-amber-400" />
             <div className="absolute -top-0.5 px-1 rounded bg-amber-950 text-[8px] font-mono text-amber-200 border border-amber-500/50 uppercase">
@@ -120,7 +121,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
         {/* Active Opcode Inspector Bar */}
         <div className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded border border-slate-800 bg-[#0e131f]">
           <div className="flex items-center gap-2">
-            <span className="text-slate-500">ACTIVE INSTRUCTION:</span>
+            <span className="text-slate-500">ACTIVE OPCODE:</span>
             <span className="font-bold text-amber-300">[{currentOpcode.opcode}]</span>
             {currentOpcode.arg && <span className="text-slate-300 font-normal">{currentOpcode.arg}</span>}
           </div>
@@ -143,7 +144,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-slate-400 flex items-center gap-1.5">
               <Fuel className="size-3.5 text-slate-400" />
-              <span>CUMULATIVE GAS PROFILE</span>
+              <span>GAS CONSUMPTION PROFILE</span>
             </span>
             <span className="text-slate-200 font-bold tabular-nums">
               {currentGas.toLocaleString()} / {scenario.metrics.gasSimulated.toLocaleString()}
@@ -162,7 +163,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
               />
             </div>
             <div className="flex justify-between text-[10px] font-mono text-slate-500">
-              <span>Expected Baseline: {scenario.metrics.gasExpected.toLocaleString()}</span>
+              <span>Expected Baseline: <span className="tabular-nums">{scenario.metrics.gasExpected.toLocaleString()}</span></span>
               <span className={scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? 'text-rose-400 font-semibold' : 'text-emerald-400'}>
                 {scenario.metrics.gasSimulated > scenario.metrics.gasExpected ? '+' : ''}
                 {(((scenario.metrics.gasSimulated - scenario.metrics.gasExpected) / scenario.metrics.gasExpected) * 100).toFixed(0)}%
@@ -176,7 +177,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-slate-400 flex items-center gap-1.5">
               <Database className="size-3.5 text-slate-400" />
-              <span>MUTATION STATUS</span>
+              <span>STATE MUTATIONS</span>
             </span>
             <span className="text-slate-200 font-bold tabular-nums">
               {scenario.metrics.storageSlotsTouched} SLOTS
@@ -200,7 +201,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
       {/* Tabular Storage Slot Differential Inspector */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-          <span>STORAGE SLOT DIFFERENTIAL LOG (SSTORE/SLOAD)</span>
+          <span>STORAGE SLOT DIFFERENTIAL LOG</span>
           <span className="text-[10px] text-slate-500">EVM WORD DELTAS</span>
         </div>
 
@@ -215,7 +216,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
                 <th className="py-2 px-3 text-right">VERDICT</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80 bg-[#0e131f]">
+            <tbody className="divide-y divide-slate-800 bg-[#0e131f]">
               {scenario.storageDeltas.map((delta) => (
                 <tr
                   key={delta.slot}
@@ -249,10 +250,10 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
 
       {/* Pathogenic Call Alert Banner */}
       {(isCritical || isHigh) && (
-        <div className="p-4 rounded border border-rose-800/80 bg-rose-950/20 space-y-2 animate-alert-pulse">
+        <div className="p-4 rounded border border-rose-800/80 bg-rose-950/20 space-y-2">
           <div className="flex items-center gap-2 text-rose-400 font-mono text-xs font-bold uppercase tracking-wide">
             <ShieldAlert className="size-4 text-rose-500" />
-            <span>CONTAINMENT TRIGGER: PATHOGENIC SIGNAL DETECTED</span>
+            <span>PATHOGENIC SIGNAL DETECTED</span>
           </div>
           <p className="text-xs text-slate-300 font-sans leading-relaxed text-pretty">
             {scenario.threat.pathogenicSignal}

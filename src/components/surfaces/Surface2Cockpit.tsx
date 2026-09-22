@@ -63,7 +63,10 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                 <TabsTrigger
                   key={s.id}
                   active={s.id === selectedScenarioId}
-                  onClick={() => onSelectScenario(s.id)}
+                  onClick={() => {
+                    onSelectScenario(s.id);
+                    setActiveStepIndex(0);
+                  }}
                 >
                   <span
                     className={`inline-block size-1.5 rounded-full mr-1.5 ${
@@ -88,6 +91,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 
         {/* BEAT 1: 5-Second Traffic Light Verdict (The Human / Judge Layer) */}
         <UnifiedVerdictCard
+          key={activeScenario.id}
           scenario={activeScenario}
           onNavigateTab={onNavigateTab}
         />

@@ -9,10 +9,7 @@ import {
   ArrowRight, 
   XCircle, 
   CheckCircle2, 
-  Lock, 
-  Zap, 
-  Flame,
-  FileCode 
+  Zap 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SimulationScenario } from '../../lib/types';
@@ -60,17 +57,15 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
 
   return (
     <Card
-      className={`p-5 sm:p-6 space-y-5 transition-all duration-200 ${
-        isClean
-          ? 'border-emerald-800/80 bg-gradient-to-b from-[#0a1813] to-[#0e131f]'
-          : 'border-rose-700/80 bg-gradient-to-b from-[#190a12] to-[#0e131f]'
+      className={`p-5 sm:p-6 space-y-5 transition-colors duration-200 bg-[#0e131f] ${
+        isClean ? 'border-emerald-800/80' : 'border-rose-800/80'
       }`}
     >
-      {/* 5-Second Traffic Light Top Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+      {/* Pre-Flight Firewall Verdict Top Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div className="flex items-center gap-3">
-          {/* Traffic Light Physical Indicator */}
-          <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-[#090d16] border border-slate-800">
+          {/* Traffic Light Physical Status Indicator */}
+          <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-[#090d16] border border-slate-800 shrink-0">
             <span
               className={`size-2.5 rounded-full transition-all duration-200 ${
                 isCritical
@@ -99,11 +94,11 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
 
           <div>
             <div className="text-[10px] font-mono uppercase text-slate-400 font-semibold tracking-wider flex items-center gap-2">
-              <span>VISCERAL 5-SECOND TRAFFIC LIGHT VERDICT</span>
+              <span>PRE-FLIGHT FIREWALL VERDICT</span>
               <span>•</span>
-              <span className="text-cyan-400">0.42ms CLIENT-SIDE</span>
+              <span className="text-cyan-400 tabular-nums">0.42ms CLIENT-SIDE</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold font-sans text-white mt-0.5">
+            <h3 className="text-lg sm:text-xl font-bold font-sans text-white mt-0.5 text-balance">
               {isClean ? 'Safe to Sign · Conforming Transaction' : 'Critical Threat Intercepted · Malicious Prompt'}
             </h3>
           </div>
@@ -145,11 +140,11 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
         </div>
       </div>
 
-      {/* Mode Switcher inside card: With Vernier vs Without Vernier */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#090d16]/80 p-2.5 rounded-lg border border-slate-800">
+      {/* Mode Switcher: Protected by Vernier vs Without Vernier */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[#090d16] p-2.5 rounded-lg border border-slate-800">
         <div className="text-xs font-mono text-slate-300 flex items-center gap-2">
-          <Zap className="size-3.5 text-amber-400" />
-          <span>Interactive Contrast: Test wallet experience with vs without Vernier firewall</span>
+          <Zap className="size-3.5 text-amber-400 shrink-0" />
+          <span>SIMULATION RUNTIME: Pre-Flight Sandbox vs Raw Blind Signing</span>
         </div>
 
         <TabsList>
@@ -158,7 +153,7 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
             onClick={() => setTestMode('protected')}
             badge={testMode === 'protected' ? 'ACTIVE' : undefined}
           >
-            🛡️ Protected by Vernier
+            Protected (Vernier Active)
           </TabsTrigger>
           <TabsTrigger
             active={testMode === 'blind'}
@@ -168,46 +163,46 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
             }}
             badge={testMode === 'blind' ? 'BLIND' : undefined}
           >
-            ❌ Without Vernier (Blind Sign)
+            Unprotected (Blind Sign)
           </TabsTrigger>
         </TabsList>
       </div>
 
       {testMode === 'protected' ? (
-        /* PROTECTED MODE: Visceral Side-by-Side Contrast (What You See vs Calldata Reality) */
+        /* PROTECTED MODE: Side-by-Side Reality (Prompted Intent vs Calldata Ground Truth) */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Card Left: What The Website Promises */}
+          {/* Card Left: Prompted Intent */}
           <div className="p-4 rounded-lg border border-slate-800 bg-[#090d16] flex flex-col justify-between space-y-3">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold tracking-wider flex items-center gap-1.5">
                   <Gift className="size-3.5 text-cyan-400" />
-                  <span>1. What The dApp Prompts You</span>
+                  <span>PROMPTED INTENT</span>
                 </span>
-                <Badge variant="info" size="sm">User View</Badge>
+                <Badge variant="outline" size="sm">UI Claim</Badge>
               </div>
 
-              <h4 className="font-sans font-bold text-base text-slate-100">
+              <h4 className="font-sans font-bold text-base text-slate-100 text-balance">
                 {explainer.scamPromise}
               </h4>
 
-              <p className="text-xs text-slate-400 font-sans leading-relaxed">
+              <p className="text-xs text-slate-400 font-sans leading-relaxed text-pretty">
                 {explainer.scamSubtitle}
               </p>
             </div>
 
-            <div className="p-2.5 rounded bg-[#0e131f] border border-slate-800/80 text-[11px] font-sans text-slate-400 flex items-center gap-2">
-              <span className="size-2 rounded-full bg-cyan-400" />
-              <span>Target: <code className="font-mono text-slate-300">{scenario.intent.targetContract}</code></span>
+            <div className="p-2.5 rounded bg-[#0e131f] border border-slate-800 text-[11px] font-sans text-slate-400 flex items-center gap-2">
+              <span className="size-2 rounded-full bg-cyan-400 shrink-0" />
+              <span className="truncate">Target: <code className="font-mono text-slate-300">{scenario.intent.targetContract}</code></span>
             </div>
           </div>
 
-          {/* Card Right: The Calldata Reality */}
+          {/* Card Right: Mutation Reality */}
           <div
             className={`p-4 rounded-lg border flex flex-col justify-between space-y-3 ${
               isClean
-                ? 'border-emerald-800/80 bg-emerald-950/30'
-                : 'border-rose-800/80 bg-rose-950/30'
+                ? 'border-emerald-800/80 bg-emerald-950/20'
+                : 'border-rose-800/80 bg-rose-950/20'
             }`}
           >
             <div className="space-y-2">
@@ -218,7 +213,7 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
                   ) : (
                     <AlertTriangle className="size-3.5 text-rose-400" />
                   )}
-                  <span>2. Calldata Reality (Firewall Ground Truth)</span>
+                  <span>MUTATION REALITY</span>
                 </span>
                 <Badge variant={isClean ? 'success' : 'destructive'} size="sm" dot={!isClean}>
                   {isClean ? 'Conforming' : 'Exploit Attempt'}
@@ -226,27 +221,27 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
               </div>
 
               <h4
-                className={`font-sans font-bold text-base ${
+                className={`font-sans font-bold text-base text-balance ${
                   isClean ? 'text-emerald-200' : 'text-rose-200'
                 }`}
               >
                 {explainer.actualAction}
               </h4>
 
-              <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                <strong>Financial Impact:</strong> {explainer.victimLoss}
+              <p className="text-xs text-slate-300 font-sans leading-relaxed text-pretty">
+                <strong>Financial Impact:</strong> <span className="tabular-nums">{explainer.victimLoss}</span>
               </p>
             </div>
 
-            <div className="p-2.5 rounded bg-[#090d16]/80 border border-slate-800 text-[11px] font-sans flex items-center justify-between">
-              <span className={isClean ? 'text-emerald-300 font-medium' : 'text-rose-300 font-medium'}>
-                {isClean ? '✓ Zero malicious side effects detected' : '🛡️ Signature disabled: Max approval prevented'}
+            <div className="p-2.5 rounded bg-[#090d16] border border-slate-800 text-[11px] font-sans flex items-center justify-between gap-2">
+              <span className={`truncate ${isClean ? 'text-emerald-300 font-medium' : 'text-rose-300 font-medium'}`}>
+                {isClean ? 'Zero malicious side effects detected' : 'Signature disabled: Approval prevented'}
               </span>
               <Button
                 variant="link"
                 size="sm"
                 onClick={() => onNavigateTab('proof')}
-                className="text-amber-400 hover:text-amber-300 font-mono text-[10px] p-0 h-auto"
+                className="text-amber-400 hover:text-amber-300 font-mono text-[10px] p-0 h-auto shrink-0"
               >
                 Inspect Proof →
               </Button>
@@ -255,17 +250,17 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
         </div>
       ) : (
         /* BLIND MODE: What happens without Vernier */
-        <div className="p-5 rounded-lg border border-rose-800 bg-[#090d16] space-y-4">
+        <div className="p-5 rounded-lg border border-rose-800/80 bg-[#090d16] space-y-4">
           <div className="flex items-center justify-between text-xs font-mono border-b border-slate-800 pb-2">
             <span className="text-rose-400 font-bold flex items-center gap-1.5">
               <XCircle className="size-4" />
               <span>Standard Wallet Experience (No Pre-Flight Sandbox)</span>
             </span>
-            <span className="text-slate-500">Unprotected</span>
+            <Badge variant="destructive" size="sm">Unprotected</Badge>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs text-slate-300">
+            <div className="text-xs text-slate-300 text-pretty">
               Without Vernier, wallets display raw hexadecimal calldata that is impossible for normal humans to decipher:
             </div>
             <div className="p-3 rounded bg-[#0e131f] border border-slate-800 font-mono text-xs text-slate-400 break-all leading-relaxed">
@@ -275,13 +270,13 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
           </div>
 
           {hasSimulatedBlindSign ? (
-            <div className="p-4 rounded border border-rose-600 bg-rose-950/70 text-center space-y-2">
+            <div className="p-4 rounded border border-rose-600 bg-rose-950/60 text-center space-y-2">
               <div className="text-rose-300 font-bold font-sans text-sm flex items-center justify-center gap-2">
-                <XCircle className="size-5 text-rose-400" />
-                <span>💥 WALLET COMPROMISED: ALL TOKENS DRAINED</span>
+                <ShieldAlert className="size-5 text-rose-400" />
+                <span>CRITICAL EXPLOIT EXECUTED: ASSETS DRAINED</span>
               </div>
-              <p className="text-xs text-rose-200 font-sans">
-                You clicked Confirm. In the next block, the attacker executed transferFrom and drained <strong>{explainer.victimLoss}</strong>.
+              <p className="text-xs text-rose-200 font-sans text-pretty">
+                You clicked Confirm. In the next block, the attacker executed transferFrom and drained <strong className="tabular-nums">{explainer.victimLoss}</strong>.
               </p>
               <Button
                 variant="primary"
@@ -294,7 +289,7 @@ export const UnifiedVerdictCard: React.FC<UnifiedVerdictCardProps> = ({
               </Button>
             </div>
           ) : (
-            <div className="flex items-center justify-between gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
               <span className="text-xs text-slate-400 font-sans">
                 The user cannot tell what this prompt does and clicks Confirm...
               </span>

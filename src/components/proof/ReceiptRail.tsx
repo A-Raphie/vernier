@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, ShieldAlert, FileCode, Check, Copy, Lock, CheckCircle2 } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { ShieldCheck, FileCode, Check, Copy, Lock } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
 import { Button, Badge, Card } from '../ui';
 
@@ -13,7 +12,6 @@ interface ReceiptRailProps {
 export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
   const [copied, setCopied] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [actionConfirmed, setActionConfirmed] = useState(false);
 
   const isHazard = scenario.riskScore > 40;
 
@@ -21,18 +19,6 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
     navigator.clipboard.writeText(JSON.stringify(scenario, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handlePrimaryAction = () => {
-    setActionConfirmed(true);
-    if (!isHazard) {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.8 },
-      });
-    }
-    setTimeout(() => setActionConfirmed(false), 3500);
   };
 
   return (
@@ -72,39 +58,26 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
         </div>
       </div>
 
-      {/* Single Primary Action CTA using harvested Button */}
+      {/* Attestation Proof Actions (Cryptographic Rail Actions) */}
       <div className="space-y-2 pt-1">
-        {isHazard ? (
-          <Button
-            variant="destructive"
-            size="default"
-            onClick={handlePrimaryAction}
-            className="w-full font-bold uppercase tracking-wider"
-            leftIcon={<ShieldAlert className="size-3.5" />}
-          >
-            {actionConfirmed ? 'TRANSACTION HALTED & ISOLATED' : 'HALT TRANSACTION & ISOLATE'}
-          </Button>
-        ) : (
-          <Button
-            variant="primary"
-            size="default"
-            onClick={handlePrimaryAction}
-            className="w-full font-bold uppercase tracking-wider"
-            leftIcon={<CheckCircle2 className="size-3.5" />}
-          >
-            {actionConfirmed ? 'BROADCAST DISPATCHED TO MEMPOOL' : 'APPROVE & BROADCAST TRANSACTION'}
-          </Button>
-        )}
-
-        {/* Secondary Action using harvested Button */}
         <Button
           variant="secondary"
           size="default"
           onClick={() => setShowModal(true)}
-          className="w-full text-slate-300"
+          className="w-full text-slate-200 font-medium"
           leftIcon={<FileCode className="size-3.5" />}
         >
           VIEW SIGNED ATTESTATION RECEIPT
+        </Button>
+
+        <Button
+          variant="outline"
+          size="default"
+          onClick={handleCopy}
+          className="w-full text-slate-400 hover:text-slate-200 font-mono text-xs"
+          leftIcon={copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
+        >
+          {copied ? 'RECEIPT COPIED TO CLIPBOARD' : 'COPY RAW RECEIPT JSON'}
         </Button>
       </div>
 

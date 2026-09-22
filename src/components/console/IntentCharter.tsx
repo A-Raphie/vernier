@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, CheckCircle, AlertCircle, Compass } from 'lucide-react';
+import { ExternalLink, Compass } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
 import { RiskGauge } from './RiskGauge';
 import { Badge, Card } from '../ui';
