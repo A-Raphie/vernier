@@ -1,28 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  Cpu, 
-  ShieldAlert, 
-  ShieldCheck, 
-  CheckCircle2, 
-  Sliders, 
-  SkipBack, 
-  SkipForward, 
-  Fuel, 
-  Database, 
-  FileCode, 
-  Check, 
-  Copy, 
-  Lock, 
-  AlertTriangle, 
-  Gift, 
-  ExternalLink, 
-  Terminal, 
-  XCircle, 
-  Zap, 
-  ArrowRight 
+import {
+  ArrowLeft,
+  ShieldAlert,
+  ShieldCheck,
+  CheckCircle2,
+  Sliders,
+  SkipBack,
+  SkipForward,
+  Fuel,
+  Database,
+  FileCode,
+  Check,
+  Copy,
+  Lock,
+  AlertTriangle,
+  Gift,
+  ExternalLink,
+  XCircle,
+  Zap,
+  ArrowRight,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SimulationScenario } from '../../lib/types';
@@ -47,31 +45,25 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 }) => {
   const activeScenario = SCENARIOS.find((s) => s.id === selectedScenarioId) || SCENARIOS[0];
 
-  // Auditor inspector tab state
   const [auditorTab, setAuditorTab] = useState<'storage' | 'bytecode'>('storage');
-
-  // Forensics simulation mode
   const [forensicsMode, setForensicsMode] = useState<'protected' | 'blind'>('protected');
   const [hasSimulatedBlindSign, setHasSimulatedBlindSign] = useState(false);
-
-  // Primary action confirmation feedback
   const [actionConfirmed, setActionConfirmed] = useState(false);
-
-  // EIP-712 Receipt copy state & modal
   const [receiptCopied, setReceiptCopied] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   const isCritical = activeScenario.riskLevel === 'CRITICAL';
   const isHigh = activeScenario.riskLevel === 'HIGH';
   const isClean = activeScenario.riskLevel === 'CLEAN';
+  const isDanger = isCritical || isHigh;
 
   const totalSteps = activeScenario.opcodeTrace.length;
   const safeStepIndex = Math.min(Math.max(0, activeStepIndex), totalSteps - 1);
   const currentOpcode = activeScenario.opcodeTrace[safeStepIndex] || activeScenario.opcodeTrace[0];
 
-  // Cumulative gas simulated up to this step
   const gasFraction = (safeStepIndex + 1) / totalSteps;
   const currentGas = Math.round(activeScenario.metrics.gasSimulated * gasFraction);
+  const gasIsOver = activeScenario.metrics.gasSimulated > activeScenario.metrics.gasExpected * 1.5;
 
   const explainer = activeScenario.plainEnglish || {
     scamPromise: activeScenario.name,
@@ -85,13 +77,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 
   const handlePrimaryAction = () => {
     setActionConfirmed(true);
-    if (isClean) {
-      confetti({
-        particleCount: 60,
-        spread: 70,
-        origin: { y: 0.7 },
-      });
-    }
+    if (isClean) confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
     setTimeout(() => setActionConfirmed(false), 3500);
   };
 
@@ -101,307 +87,297 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
     setTimeout(() => setReceiptCopied(false), 2000);
   };
 
-  const handlePrevStep = () => {
-    setActiveStepIndex(Math.max(0, safeStepIndex - 1));
-  };
-
-  const handleNextStep = () => {
-    setActiveStepIndex(Math.min(totalSteps - 1, safeStepIndex + 1));
-  };
+  const riskSegmentsFilled = Math.round((activeScenario.riskScore / 100) * 10);
 
   return (
-    <div className="py-6 px-4 lg:px-8 bg-[#090d16] min-h-[calc(100vh-3.5rem)] flex-1 space-y-5">
-      <div className="max-w-7xl mx-auto space-y-5">
+    <div style={{ padding: '20px 24px', background: 'var(--bg)', minHeight: 'calc(100vh - 3.5rem)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-        {/* 1. TOP COMMAND BAR (Unified Verdict + Scenarios + Single Primary CTA) */}
-        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-4 rounded-xl border border-slate-800 bg-[#0e131f] shadow-sm">
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => onNavigateTab('overview')}
-              aria-label="Return to Overview"
-              title="Return to Overview"
-              className="size-8 shrink-0"
-            >
-              <ArrowLeft className="size-4" />
-            </Button>
+        {/* ── COMMAND BAR ── */}
+        <div className="vn-panel" style={{ borderRadius: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 12px' }}>
 
-            {/* Traffic Light Physical Status Dots */}
-            <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-[#090d16] border border-slate-800 shrink-0">
-              <span
-                className={`size-2.5 rounded-full transition-all duration-200 ${
-                  isCritical
-                    ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'
-                    : 'bg-rose-950 opacity-40'
-                }`}
-                title="Critical Threat"
-              />
-              <span
-                className={`size-2.5 rounded-full transition-all duration-200 ${
-                  isHigh
-                    ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]'
-                    : 'bg-amber-950 opacity-40'
-                }`}
-                title="High Risk"
-              />
-              <span
-                className={`size-2.5 rounded-full transition-all duration-200 ${
-                  isClean
-                    ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]'
-                    : 'bg-emerald-950 opacity-40'
-                }`}
-                title="Clean Conforming"
-              />
+            {/* Left: back + dots + scenarios + name */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+              <Button
+                variant="outline" size="icon"
+                onClick={() => onNavigateTab('overview')}
+                aria-label="Overview"
+                className="size-7 shrink-0"
+              >
+                <ArrowLeft className="size-3.5" />
+              </Button>
+
+              {/* Traffic dots */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '4px 8px', borderRadius: 999,
+                background: 'var(--bg)', border: '1px solid var(--border)',
+              }}>
+                {[
+                  { lit: isCritical, on: 'var(--rose)', shadow: '0 0 6px rgba(244,63,94,0.8)' },
+                  { lit: isHigh,     on: 'var(--amber)', shadow: '0 0 6px rgba(245,158,11,0.8)' },
+                  { lit: isClean,    on: 'var(--emerald)', shadow: '0 0 6px rgba(16,185,129,0.8)' },
+                ].map((d, i) => (
+                  <span key={i} style={{
+                    width: 7, height: 7, borderRadius: '50%',
+                    background: d.lit ? d.on : 'rgba(255,255,255,0.06)',
+                    boxShadow: d.lit ? d.shadow : 'none',
+                    transition: 'all 200ms',
+                  }} />
+                ))}
+              </div>
+
+              {/* Scenario tabs */}
+              <TabsList>
+                {SCENARIOS.map((s) => (
+                  <TabsTrigger
+                    key={s.id}
+                    active={s.id === selectedScenarioId}
+                    onClick={() => {
+                      onSelectScenario(s.id);
+                      setActiveStepIndex(0);
+                      setForensicsMode('protected');
+                    }}
+                  >
+                    <span style={{
+                      display: 'inline-block', width: 6, height: 6, borderRadius: '50%', marginRight: 4,
+                      background: s.riskLevel === 'CRITICAL' ? 'var(--rose)' : s.riskLevel === 'HIGH' ? 'var(--amber)' : 'var(--emerald)',
+                    }} />
+                    {s.name.split(' ')[0]}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {/* Scenario name + benchmark */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                paddingLeft: 10, borderLeft: '1px solid var(--border)',
+                fontFamily: 'var(--mono)', fontSize: 11,
+              }} className="hidden lg:flex">
+                <span style={{ color: 'var(--ink)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {activeScenario.name}
+                </span>
+                <span style={{ color: 'var(--ink-muted)' }}>·</span>
+                <span style={{ color: 'var(--cyan)', flexShrink: 0 }}>0.42ms</span>
+              </div>
             </div>
 
-            {/* Scenario Switcher Tabs */}
-            <TabsList className="overflow-x-auto">
-              {SCENARIOS.map((s) => (
-                <TabsTrigger
-                  key={s.id}
-                  active={s.id === selectedScenarioId}
-                  onClick={() => {
-                    onSelectScenario(s.id);
-                    setActiveStepIndex(0);
-                    setForensicsMode('protected');
-                  }}
+            {/* Right: status badge + CTA */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <span className={`vn-badge ${isClean ? 'vn-badge-clean' : 'vn-badge-critical'}`}>
+                {isClean ? 'Safe to sign' : 'Drain intercepted'}
+              </span>
+              {isClean ? (
+                <Button
+                  variant="primary" size="sm"
+                  onClick={handlePrimaryAction}
+                  leftIcon={<CheckCircle2 className="size-3.5" />}
+                  className="font-bold uppercase tracking-wider"
                 >
-                  <span
-                    className={`inline-block size-1.5 rounded-full mr-1.5 ${
-                      s.riskLevel === 'CRITICAL'
-                        ? 'bg-rose-500'
-                        : s.riskLevel === 'HIGH'
-                        ? 'bg-amber-400'
-                        : 'bg-emerald-400'
-                    }`}
-                  />
-                  {s.name.split(' ')[0]}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            <div className="hidden xl:flex items-center gap-2 pl-3 border-l border-slate-800 text-xs font-mono text-slate-400">
-              <span className="text-white font-semibold truncate max-w-xs">{activeScenario.name}</span>
-              <span>•</span>
-              <span className="text-cyan-400 tabular-nums">0.42ms Local Viem Sandbox</span>
+                  {actionConfirmed ? 'Dispatched' : 'Approve & Broadcast'}
+                </Button>
+              ) : (
+                <Button
+                  variant="destructive" size="sm"
+                  onClick={handlePrimaryAction}
+                  leftIcon={<ShieldAlert className="size-3.5" />}
+                  className="font-bold uppercase tracking-wider"
+                >
+                  {actionConfirmed ? 'Halted' : 'Halt Transaction'}
+                </Button>
+              )}
             </div>
-          </div>
-
-          {/* Right Status Pill + Single Primary CTA Button */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 justify-between md:justify-end">
-            <Badge
-              variant={isClean ? 'success' : 'destructive'}
-              size="lg"
-              dot
-              dotPulse
-              className="font-bold tracking-wide shrink-0"
-            >
-              {isClean ? 'SAFE TO SIGN' : 'CRITICAL DRAIN INTERCEPTED'}
-            </Badge>
-
-            {isClean ? (
-              <Button
-                variant="primary"
-                size="default"
-                onClick={handlePrimaryAction}
-                leftIcon={<CheckCircle2 className="size-4" />}
-                className="font-bold uppercase tracking-wider w-full sm:w-auto"
-              >
-                {actionConfirmed ? 'BROADCAST DISPATCHED' : 'APPROVE & BROADCAST'}
-              </Button>
-            ) : (
-              <Button
-                variant="destructive"
-                size="default"
-                onClick={handlePrimaryAction}
-                leftIcon={<ShieldAlert className="size-4" />}
-                className="font-bold uppercase tracking-wider shadow-lg w-full sm:w-auto"
-              >
-                {actionConfirmed ? 'TRANSACTION HALTED & ISOLATED' : 'HALT TRANSACTION & ISOLATE'}
-              </Button>
-            )}
           </div>
         </div>
 
-        {/* 2. DUAL-PANEL WORKBENCH (Left: EVM Caliper Execution Engine | Right: Forensics & Attestation) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* ── DUAL PANEL WORKBENCH ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '7fr 5fr', gap: 16, alignItems: 'start' }}
+             className="grid-cols-1 lg:grid-cols-[7fr_5fr]">
 
-          {/* LEFT PANEL (7 cols): Execution Metrology, Caliper Scrubber & Auditor Inspector */}
-          <div className="lg:col-span-7 rounded-xl border border-slate-800 bg-[#0e131f] flex flex-col overflow-hidden shadow-sm">
-            {/* Header: Title + Step/Gas Metrics */}
-            <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-800 bg-[#0b0f19]">
-              <div className="flex items-center gap-2">
-                <Sliders className="size-3.5 text-amber-400" />
-                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200">
-                  CALIBRATED EXECUTION SCRUBBER
-                </span>
+          {/* ════════════════ LEFT PANEL ════════════════ */}
+          <div className="vn-panel">
+
+            {/* Header */}
+            <div className="vn-panel-header">
+              <div className="vn-row">
+                <Sliders size={12} style={{ color: 'var(--amber)' }} />
+                <span className="vn-panel-title">Execution Scrubber</span>
               </div>
-              <div className="flex items-center gap-3 font-mono text-[11px] text-slate-400">
-                <span>STEP <strong className="text-slate-200 tabular-nums">{safeStepIndex + 1}</strong> OF <strong className="text-slate-200 tabular-nums">{totalSteps}</strong></span>
-                <span>•</span>
-                <span>GAS: <strong className="text-amber-300 tabular-nums">{currentGas.toLocaleString()}</strong></span>
-              </div>
+              <span className="num" style={{ fontSize: 11, color: 'var(--ink-muted)' }}>
+                Step <strong style={{ color: 'var(--ink)' }}>{safeStepIndex + 1}</strong>
+                {' '}of <strong style={{ color: 'var(--ink)' }}>{totalSteps}</strong>
+                <span style={{ margin: '0 6px', color: 'var(--border-hover)' }}>·</span>
+                Gas <strong style={{ color: 'var(--amber)' }}>{currentGas.toLocaleString()}</strong>
+              </span>
             </div>
 
-            {/* Caliper Scrubber Controls & Ruler */}
-            <div className="p-4 space-y-3 border-b border-slate-800 bg-[#090d16]">
-              <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span className="text-slate-300 font-medium">CALIPER STEP CONTROLS</span>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    onClick={handlePrevStep}
-                    disabled={safeStepIndex === 0}
-                    aria-label="Previous execution step"
-                    className="size-7"
-                  >
+            {/* Caliper scrubber */}
+            <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--border)' }}>
+              <div className="vn-row-between" style={{ marginBottom: 8 }}>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  Caliper position
+                </span>
+                <div className="vn-row" style={{ gap: 6 }}>
+                  <Button variant="secondary" size="icon" onClick={() => setActiveStepIndex(Math.max(0, safeStepIndex - 1))}
+                    disabled={safeStepIndex === 0} aria-label="Previous step" className="size-6">
                     <SkipBack className="size-3" />
                   </Button>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    onClick={handleNextStep}
-                    disabled={safeStepIndex === totalSteps - 1}
-                    aria-label="Next execution step"
-                    className="size-7"
-                  >
+                  <Button variant="secondary" size="icon" onClick={() => setActiveStepIndex(Math.min(totalSteps - 1, safeStepIndex + 1))}
+                    disabled={safeStepIndex === totalSteps - 1} aria-label="Next step" className="size-6">
                     <SkipForward className="size-3" />
                   </Button>
-                  <span className="font-mono text-amber-300 tabular-nums font-semibold ml-1">
-                    OPCODE #{currentOpcode.step}
+                  <span className="num" style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>
+                    #{currentOpcode.step}
                   </span>
                 </div>
               </div>
 
-              {/* Physical Vernier Metric Ruler */}
-              <div className="relative w-full h-9 bg-[#0e131f] rounded border border-slate-800 overflow-hidden flex items-center select-none">
-                <div className="absolute inset-0 flex justify-between px-2 items-center pointer-events-none opacity-40">
-                  {Array.from({ length: 37 }).map((_, i) => (
-                    <div key={i} className="flex flex-col items-center">
-                      <div className={`w-[1px] ${i % 5 === 0 ? 'h-4 bg-slate-400' : 'h-2 bg-slate-600'}`} />
-                      {i % 10 === 0 && <span className="text-[7px] font-mono text-slate-400">{i}</span>}
+              {/* Ruler */}
+              <div className="vn-ruler">
+                {/* tick marks */}
+                <div style={{
+                  position: 'absolute', inset: 0, display: 'flex',
+                  justifyContent: 'space-between', alignItems: 'center',
+                  padding: '0 8px', pointerEvents: 'none', opacity: 0.35,
+                }}>
+                  {Array.from({ length: 33 }).map((_, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ width: 1, height: i % 4 === 0 ? 14 : 7, background: i % 4 === 0 ? 'var(--ink-secondary)' : 'var(--border-hover)' }} />
                     </div>
                   ))}
                 </div>
-
-                <input
-                  type="range"
-                  min="0"
-                  max={totalSteps - 1}
-                  value={safeStepIndex}
-                  onChange={(e) => setActiveStepIndex(Number(e.target.value))}
-                  className="absolute inset-0 opacity-0 cursor-ew-resize w-full h-full z-10"
-                  aria-label="Vernier Step Scrubber"
-                />
-
-                <div
-                  className="absolute top-0 bottom-0 w-20 border-x border-amber-400/80 bg-amber-500/10 flex items-center justify-center pointer-events-none transition-all duration-75"
-                  style={{ left: `calc(${(safeStepIndex / Math.max(1, totalSteps - 1)) * 92}% - 4px)` }}
-                >
-                  <div className="w-[1.5px] h-full bg-amber-400" />
-                  <div className="absolute -top-0.5 px-1 rounded bg-amber-950 text-[8px] font-mono text-amber-200 border border-amber-500/50 uppercase">
+                {/* sliding window */}
+                <div style={{
+                  position: 'absolute', top: 0, bottom: 0, width: 56,
+                  borderLeft: '1px solid var(--amber)', borderRight: '1px solid var(--amber)',
+                  background: 'rgba(245,158,11,0.08)',
+                  left: `calc(${(safeStepIndex / Math.max(1, totalSteps - 1)) * 90}% - 2px)`,
+                  pointerEvents: 'none', transition: 'left 75ms ease',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <div style={{ width: 1, height: '100%', background: 'var(--amber)' }} />
+                  <span style={{
+                    position: 'absolute', top: 1, left: 4,
+                    fontFamily: 'var(--mono)', fontSize: 8,
+                    color: 'var(--amber)', background: 'rgba(9,13,22,0.9)',
+                    padding: '1px 3px', borderRadius: 3, border: '1px solid rgba(245,158,11,0.4)',
+                    textTransform: 'uppercase',
+                  }}>
                     {currentOpcode.opcode}
-                  </div>
+                  </span>
                 </div>
+                <input
+                  type="range" min="0" max={totalSteps - 1} value={safeStepIndex}
+                  onChange={(e) => setActiveStepIndex(Number(e.target.value))}
+                  aria-label="Execution step"
+                />
               </div>
 
-              {/* Active Opcode Inspector Bar */}
-              <div className="flex items-center justify-between text-xs font-mono px-3 py-2 rounded border border-slate-800 bg-[#0e131f]">
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-500">ACTIVE OPCODE:</span>
-                  <span className="font-bold text-amber-300">[{currentOpcode.opcode}]</span>
-                  {currentOpcode.arg && <span className="text-slate-300 font-normal">{currentOpcode.arg}</span>}
+              {/* Active opcode bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+                padding: '6px 10px', marginTop: 8, borderRadius: 6,
+                border: '1px solid var(--border)', background: 'rgba(9,13,22,0.5)',
+                fontFamily: 'var(--mono)', fontSize: 11,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                  <span style={{ color: 'var(--ink-muted)' }}>opcode</span>
+                  <span style={{ fontWeight: 700, color: 'var(--amber)' }}>[{currentOpcode.opcode}]</span>
+                  {currentOpcode.arg && (
+                    <span style={{ color: 'var(--ink-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {currentOpcode.arg}
+                    </span>
+                  )}
                 </div>
                 {currentOpcode.isBlocked ? (
-                  <span className="px-1.5 py-0.5 rounded border border-rose-800 bg-rose-950/60 text-[10px] text-rose-300 font-bold">
-                    INTERCEPTED BY FIREWALL
+                  <span style={{
+                    padding: '2px 7px', borderRadius: 4,
+                    border: '1px solid rgba(244,63,94,0.4)',
+                    background: 'rgba(244,63,94,0.08)',
+                    color: '#fca5a5', fontSize: 10, fontWeight: 700, letterSpacing: '0.04em',
+                    textTransform: 'uppercase', whiteSpace: 'nowrap', flexShrink: 0,
+                  }}>
+                    Blocked
                   </span>
                 ) : (
-                  <span className="text-slate-400 text-[11px] truncate max-w-xs">
-                    {currentOpcode.comment || 'Normal instruction execution'}
+                  <span style={{ color: 'var(--ink-muted)', fontSize: 10, flexShrink: 0 }}>
+                    {currentOpcode.comment || 'Normal execution'}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Telemetry Strip: Gas Baseline + State Slots Touched */}
-            <div className="grid grid-cols-2 divide-x divide-slate-800 border-b border-slate-800 bg-[#0e131f] text-xs font-mono">
-              <div className="p-3 space-y-1">
-                <div className="flex justify-between text-slate-400 text-[11px]">
-                  <span className="flex items-center gap-1.5"><Fuel className="size-3 text-slate-400" /> Cumulative Gas</span>
-                  <span className="text-slate-200 font-semibold tabular-nums">{currentGas.toLocaleString()} / {activeScenario.metrics.gasSimulated.toLocaleString()}</span>
+            {/* Gas + mutations strip */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderBottom: '1px solid var(--border)' }}>
+              <div style={{ padding: '10px 14px', borderRight: '1px solid var(--border)' }}>
+                <div className="vn-row-between" style={{ marginBottom: 5 }}>
+                  <span className="vn-stat-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <Fuel size={10} /> Gas
+                  </span>
+                  <span className="num" style={{ fontSize: 11, color: gasIsOver ? 'var(--rose)' : 'var(--ink-secondary)' }}>
+                    {currentGas.toLocaleString()} / {activeScenario.metrics.gasSimulated.toLocaleString()}
+                  </span>
                 </div>
-                <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-150 ${
-                      activeScenario.metrics.gasSimulated > activeScenario.metrics.gasExpected * 1.5 ? 'bg-rose-500' : 'bg-emerald-500'
-                    }`}
-                    style={{ width: `${(currentGas / 250000) * 100}%` }}
-                  />
+                <div className="vn-gas-bar">
+                  <div className={`vn-gas-fill ${gasIsOver ? 'is-over' : 'is-normal'}`}
+                    style={{ width: `${Math.min(100, (currentGas / 250000) * 100)}%` }} />
                 </div>
               </div>
-
-              <div className="p-3 flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-slate-400 text-[11px]"><Database className="size-3 text-slate-400" /> State Mutations</span>
-                <span className="text-slate-200 font-semibold tabular-nums">{activeScenario.metrics.storageSlotsTouched} SLOTS TOUCHED</span>
+              <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span className="vn-stat-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Database size={10} /> State mutations
+                </span>
+                <span className="num" style={{ fontSize: 11, color: 'var(--ink-secondary)', fontWeight: 600 }}>
+                  {activeScenario.metrics.storageSlotsTouched} slots
+                </span>
               </div>
             </div>
 
-            {/* Auditor Deck: Tabs between Storage Slot Deltas & Bytecode Disassembly */}
-            <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between">
+            {/* Auditor deck */}
+            <div style={{ padding: '12px 14px' }}>
+              <div className="vn-row-between" style={{ marginBottom: 10 }}>
                 <TabsList>
-                  <TabsTrigger
-                    active={auditorTab === 'storage'}
-                    onClick={() => setAuditorTab('storage')}
-                  >
-                    Storage Slot Deltas ({activeScenario.storageDeltas.length})
+                  <TabsTrigger active={auditorTab === 'storage'} onClick={() => setAuditorTab('storage')}>
+                    Storage deltas ({activeScenario.storageDeltas.length})
                   </TabsTrigger>
-                  <TabsTrigger
-                    active={auditorTab === 'bytecode'}
-                    onClick={() => setAuditorTab('bytecode')}
-                  >
-                    EVM Bytecode Trace ({totalSteps})
+                  <TabsTrigger active={auditorTab === 'bytecode'} onClick={() => setAuditorTab('bytecode')}>
+                    Bytecode trace ({totalSteps})
                   </TabsTrigger>
                 </TabsList>
-                <span className="text-[10px] font-mono text-slate-500 uppercase">AUDITOR REPLAY ENGINE</span>
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 9, color: 'var(--ink-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  Auditor mode
+                </span>
               </div>
 
               {auditorTab === 'storage' ? (
-                /* Tab 1: Storage Slot Differential Table */
-                <div className="border border-slate-800 rounded-lg overflow-hidden overflow-x-auto">
-                  <table className="w-full text-left font-mono text-[11px]">
-                    <thead className="bg-[#090d16] text-slate-400 border-b border-slate-800">
+                <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+                  <table className="vn-table">
+                    <thead>
                       <tr>
-                        <th className="py-2 px-3">SLOT</th>
-                        <th className="py-2 px-3">VARIABLE</th>
-                        <th className="py-2 px-3 hidden sm:table-cell">PREVIOUS</th>
-                        <th className="py-2 px-3">MUTATED</th>
-                        <th className="py-2 px-3 text-right">VERDICT</th>
+                        <th>Slot</th>
+                        <th>Variable</th>
+                        <th className="hidden sm:table-cell">Previous</th>
+                        <th>Mutated</th>
+                        <th className="text-right">Verdict</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800 bg-[#0e131f]">
+                    <tbody>
                       {activeScenario.storageDeltas.map((delta) => (
-                        <tr
-                          key={delta.slot}
-                          className={delta.isHazardous ? 'bg-rose-950/20 text-slate-200' : 'text-slate-300'}
-                        >
-                          <td className="py-2 px-3 font-semibold text-slate-200">{delta.slot}</td>
-                          <td className="py-2 px-3 text-slate-300">{delta.label}</td>
-                          <td className="py-2 px-3 text-slate-500 hidden sm:table-cell truncate max-w-[120px]">
+                        <tr key={delta.slot} className={delta.isHazardous ? 'is-hazard' : ''}>
+                          <td className="is-strong">{delta.slot}</td>
+                          <td>{delta.label}</td>
+                          <td className="is-muted hidden sm:table-cell" style={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {delta.prevValue}
                           </td>
-                          <td className="py-2 px-3 font-semibold truncate max-w-[140px]">
+                          <td style={{ maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                              className={delta.isHazardous ? '' : 'is-muted'}>
                             {delta.newValue}
                           </td>
-                          <td className="py-2 px-3 text-right">
-                            {delta.isHazardous ? (
-                              <Badge variant="destructive" size="sm">HAZARD</Badge>
-                            ) : (
-                              <Badge variant="success" size="sm">CONFORM</Badge>
-                            )}
+                          <td className="text-right">
+                            <span className={`vn-badge ${delta.isHazardous ? 'vn-badge-critical' : 'vn-badge-clean'}`} style={{ fontSize: 9 }}>
+                              {delta.isHazardous ? 'Hazard' : 'Conform'}
+                            </span>
                           </td>
                         </tr>
                       ))}
@@ -409,321 +385,272 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                   </table>
                 </div>
               ) : (
-                /* Tab 2: EVM Bytecode Trace */
-                <div className="h-60 overflow-y-auto font-mono text-xs space-y-0.5 bg-[#090d16] p-2 rounded-lg border border-slate-800">
+                <div className="vn-opcode-scroll">
                   {activeScenario.opcodeTrace.map((item, idx) => {
                     const isActive = idx === safeStepIndex;
+                    const isAmberOp = item.opcode === 'SSTORE' || item.opcode === 'DELEGATECALL';
                     return (
-                      <button
+                      <div
                         key={idx}
+                        className={`vn-opcode-row ${isActive ? (item.isBlocked ? 'is-active-blocked' : 'is-active-normal') : ''}`}
                         onClick={() => setActiveStepIndex(idx)}
-                        className={`w-full text-left flex items-center gap-2 py-1 px-1.5 rounded transition-colors cursor-pointer ${
-                          isActive
-                            ? item.isBlocked
-                              ? 'bg-rose-950/60 border border-rose-700/80 text-rose-200 font-bold'
-                              : 'bg-amber-950/40 border border-amber-500/50 text-amber-200 font-semibold'
-                            : 'hover:bg-slate-800/40 text-slate-400 border border-transparent'
-                        }`}
                       >
-                        <span className={`text-[10px] w-6 shrink-0 tabular-nums ${isActive ? 'text-amber-400 font-bold' : 'text-slate-600'}`}>
-                          {isActive ? '▶' : item.step}
-                        </span>
-                        <span
-                          className={`shrink-0 font-medium ${
-                            item.isBlocked
-                              ? 'text-rose-400'
-                              : item.opcode === 'SSTORE' || item.opcode === 'DELEGATECALL'
-                              ? 'text-amber-400'
-                              : 'text-slate-200'
-                          }`}
-                        >
+                        <span className="vn-opcode-step">{isActive ? '▶' : item.step}</span>
+                        <span className={`vn-opcode-name ${item.isBlocked ? 'is-rose' : isAmberOp ? 'is-amber' : ''}`}>
                           [{item.opcode}]
                         </span>
-                        {item.arg && (
-                          <span className="text-slate-400 truncate text-[11px] max-w-[140px]">
-                            {item.arg}
+                        {item.arg && <span className="vn-opcode-arg">{item.arg}</span>}
+                        {item.isBlocked && (
+                          <span className="vn-badge vn-badge-critical" style={{ marginLeft: 'auto', fontSize: 9 }}>
+                            Blocked
                           </span>
                         )}
-                        {item.isBlocked && (
-                          <Badge variant="destructive" size="sm" className="ml-auto text-[9px] py-0 px-1">
-                            <ShieldAlert className="size-2.5 mr-0.5" />
-                            BLOCKED
-                          </Badge>
-                        )}
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
               )}
             </div>
 
-            {/* Pathogenic Signal Banner (if threat intercepted) */}
-            {(isCritical || isHigh) && (
-              <div className="p-3.5 border-t border-rose-800/60 bg-rose-950/20 text-xs font-mono space-y-1">
-                <div className="flex items-center gap-2 text-rose-400 font-bold">
-                  <ShieldAlert className="size-3.5 text-rose-500" />
-                  <span>PATHOGENIC SIGNAL: {activeScenario.threat.pathogenicSignal}</span>
-                </div>
-                <div className="text-[11px] text-slate-400">
-                  Firewall Policy: <span className="text-rose-300 font-semibold">{activeScenario.threat.remediation}</span>
+            {/* Pathogenic signal notice (bottom of left panel) */}
+            {isDanger && (
+              <div className="vn-notice is-critical">
+                <ShieldAlert size={14} style={{ color: 'var(--rose)', flexShrink: 0, marginTop: 1 }} />
+                <div>
+                  <div className="vn-notice-title" style={{ marginBottom: 3 }}>Pathogenic signal detected</div>
+                  <div style={{ fontSize: 12 }}>{activeScenario.threat.pathogenicSignal}</div>
+                  <div style={{ marginTop: 4, fontSize: 11, color: 'var(--ink-muted)' }}>
+                    Policy: <span style={{ color: '#fca5a5', fontWeight: 600 }}>{activeScenario.threat.remediation}</span>
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* RIGHT PANEL (5 cols): Forensics, Risk Index & Cryptographic Evidence Rail */}
-          <div className="lg:col-span-5 rounded-xl border border-slate-800 bg-[#0e131f] flex flex-col overflow-hidden shadow-sm space-y-0">
-            {/* Header: Forensics Title + Simulation Mode Toggle */}
-            <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-800 bg-[#0b0f19]">
-              <div className="flex items-center gap-2">
-                <Zap className="size-3.5 text-cyan-400" />
-                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200">
-                  TRANSACTION FORENSICS
-                </span>
-              </div>
+          {/* ════════════════ RIGHT PANEL ════════════════ */}
+          <div className="vn-panel">
 
+            {/* Header: forensics title + protected/blind toggle */}
+            <div className="vn-panel-header">
+              <div className="vn-row">
+                <Zap size={12} style={{ color: 'var(--cyan)' }} />
+                <span className="vn-panel-title">Transaction Forensics</span>
+              </div>
               <TabsList>
                 <TabsTrigger
                   active={forensicsMode === 'protected'}
                   onClick={() => setForensicsMode('protected')}
-                  badge={forensicsMode === 'protected' ? 'ACTIVE' : undefined}
+                  badge={forensicsMode === 'protected' ? 'Active' : undefined}
                 >
                   Protected
                 </TabsTrigger>
                 <TabsTrigger
                   active={forensicsMode === 'blind'}
-                  onClick={() => {
-                    setForensicsMode('blind');
-                    setHasSimulatedBlindSign(false);
-                  }}
-                  badge={forensicsMode === 'blind' ? 'BLIND' : undefined}
+                  onClick={() => { setForensicsMode('blind'); setHasSimulatedBlindSign(false); }}
+                  badge={forensicsMode === 'blind' ? 'Blind' : undefined}
                 >
-                  Blind Sign
+                  Blind sign
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            {/* Forensics Body */}
             {forensicsMode === 'protected' ? (
-              <div className="p-4 space-y-4">
-                {/* 1. Forensics Diff: Prompted Intent vs Mutation Reality */}
-                <div className="space-y-3">
-                  {/* Prompted Intent */}
-                  <div className="space-y-1.5 border-b border-slate-800/80 pb-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold tracking-wider flex items-center gap-1.5">
-                        <Gift className="size-3 text-cyan-400" />
-                        <span>PROMPTED INTENT</span>
-                      </span>
-                      <Badge variant="outline" size="sm">UI Claim</Badge>
-                    </div>
-
-                    <h4 className="font-sans font-bold text-sm text-white">
-                      {explainer.scamPromise}
-                    </h4>
-
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {explainer.scamSubtitle}
-                    </p>
-
-                    <div className="text-[11px] font-mono text-slate-400 pt-1 flex items-center justify-between">
-                      <span>Target: <code className="text-slate-300">{activeScenario.intent.targetContract}</code></span>
-                      {activeScenario.intent.verifiedSource ? (
-                        <Badge variant="success" size="sm">VERIFIED</Badge>
-                      ) : (
-                        <Badge variant="destructive" size="sm">UNVERIFIED</Badge>
-                      )}
-                    </div>
+              <>
+                {/* ── PROMPTED INTENT ── */}
+                <div className="vn-intent-block">
+                  <div className="vn-intent-label">
+                    <Gift size={10} />
+                    What the UI claims
+                    <span className="vn-badge vn-badge-neutral" style={{ marginLeft: 'auto' }}>
+                      {activeScenario.intent.verifiedSource ? 'Verified' : 'Unverified'}
+                    </span>
                   </div>
-
-                  {/* Mutation Reality */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono uppercase text-slate-300 font-semibold tracking-wider flex items-center gap-1.5">
-                        {isClean ? <ShieldCheck className="size-3.5 text-emerald-400" /> : <AlertTriangle className="size-3.5 text-rose-400" />}
-                        <span>MUTATION REALITY</span>
-                      </span>
-                      <Badge variant={isClean ? 'success' : 'destructive'} size="sm">
-                        {isClean ? 'Conforming' : 'Exploit Attempt'}
-                      </Badge>
-                    </div>
-
-                    <h4 className={`font-sans font-bold text-sm ${isClean ? 'text-emerald-200' : 'text-rose-200'}`}>
-                      {explainer.actualAction}
-                    </h4>
-
-                    <p className="text-xs text-slate-300">
-                      <strong>Financial Impact:</strong> <span className="tabular-nums font-semibold">{explainer.victimLoss}</span>
-                    </p>
-
-                    <div className="text-[11px] font-mono pt-1 text-slate-400">
-                      <span className={isClean ? 'text-emerald-300' : 'text-rose-300'}>
-                        {isClean ? '✓ Zero malicious side effects detected' : '🛡️ Signature disabled: Max approval prevented'}
-                      </span>
-                    </div>
+                  <p className="vn-intent-headline">{explainer.scamPromise}</p>
+                  <p style={{ fontSize: 12, color: 'var(--ink-muted)', marginBottom: 6, lineHeight: 1.5 }}>
+                    {explainer.scamSubtitle}
+                  </p>
+                  <div style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>Target:</span>
+                    <code style={{ color: 'var(--ink-secondary)' }}>{activeScenario.intent.targetContract}</code>
                   </div>
                 </div>
 
-                {/* 2. Security Risk Index */}
-                <div className="p-3 rounded-lg border border-slate-800 bg-[#090d16] space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold">SECURITY RISK INDEX</span>
-                    <Badge variant={isClean ? 'success' : isHigh ? 'warning' : 'destructive'} size="sm">
-                      {activeScenario.riskLevel} RISK
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-baseline justify-between font-mono">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className={`text-xl font-bold tabular-nums ${isClean ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {activeScenario.riskScore}
-                      </span>
-                      <span className="text-xs text-slate-500">/ 100</span>
-                    </div>
-                    <span className="text-[10px] text-slate-400">
-                      {isClean ? 'SAFE EXECUTION' : isHigh ? 'CAUTION ADVISED' : 'MALICIOUS CALIBRATION'}
+                {/* ── MUTATION REALITY ── */}
+                <div className={`vn-reality-block ${isDanger ? 'is-critical' : 'is-clean'}`}>
+                  <div className="vn-intent-label" style={{ color: isDanger ? 'var(--rose)' : 'var(--emerald)' }}>
+                    {isDanger ? <AlertTriangle size={10} /> : <ShieldCheck size={10} />}
+                    What the contract actually does
+                    <span className={`vn-badge ${isDanger ? 'vn-badge-critical' : 'vn-badge-clean'}`} style={{ marginLeft: 'auto' }}>
+                      {isDanger ? 'Exploit' : 'Conforming'}
                     </span>
                   </div>
+                  <p className={`vn-reality-headline ${isDanger ? 'is-critical' : 'is-clean'}`}>
+                    {explainer.actualAction}
+                  </p>
+                  <p className={`vn-impact ${isDanger ? 'is-critical' : 'is-clean'}`}>
+                    Financial impact: {explainer.victimLoss}
+                  </p>
+                  {isDanger && (
+                    <div style={{
+                      marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(244,63,94,0.15)',
+                      fontFamily: 'var(--mono)', fontSize: 11, color: '#fca5a5',
+                    }}>
+                      Signature disabled — max approval prevented
+                    </div>
+                  )}
+                  {isClean && (
+                    <div style={{
+                      marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(16,185,129,0.15)',
+                      fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--emerald)',
+                    }}>
+                      Zero malicious side effects detected
+                    </div>
+                  )}
+                </div>
 
-                  {/* 10-Segment Progress Meter */}
-                  <div className="grid grid-cols-10 gap-1 h-1.5">
-                    {Array.from({ length: 10 }).map((_, idx) => {
-                      const active = idx < Math.round((activeScenario.riskScore / 100) * 10);
-                      return (
-                        <div
-                          key={idx}
-                          className={`rounded-sm transition-colors ${
-                            active
-                              ? isClean ? 'bg-emerald-400' : isHigh ? 'bg-amber-400' : 'bg-rose-500'
-                              : 'bg-slate-800'
-                          }`}
-                        />
-                      );
-                    })}
+                {/* ── SECURITY RISK INDEX ── */}
+                <div className="vn-risk-block">
+                  <div className="vn-row-between" style={{ marginBottom: 8 }}>
+                    <span className="vn-panel-title">Security risk index</span>
+                    <span className={`vn-badge ${isDanger ? 'vn-badge-critical' : 'vn-badge-clean'}`}>
+                      {activeScenario.riskLevel} risk
+                    </span>
                   </div>
-
-                  {/* Vectors list */}
-                  <div className="space-y-1 pt-1">
+                  <div className="vn-row-between">
+                    <span className={`vn-risk-score ${isDanger ? 'is-critical' : 'is-clean'}`}>
+                      {activeScenario.riskScore}
+                      <span style={{ fontSize: 14, fontWeight: 400, color: 'var(--ink-muted)', marginLeft: 4 }}>/100</span>
+                    </span>
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)' }}>
+                      {isDanger ? 'Malicious calibration' : 'Safe execution'}
+                    </span>
+                  </div>
+                  <div className="vn-risk-segments">
+                    {Array.from({ length: 10 }).map((_, idx) => (
+                      <div key={idx} style={{
+                        background: idx < riskSegmentsFilled
+                          ? isDanger ? 'var(--rose)' : 'var(--emerald)'
+                          : 'var(--border)',
+                      }} />
+                    ))}
+                  </div>
+                  <div>
                     {activeScenario.threat.vectors.length > 0 ? (
                       activeScenario.threat.vectors.map((vec, idx) => (
-                        <div key={idx} className="flex items-start gap-1.5 text-[10px] font-mono text-rose-300">
-                          <AlertTriangle className="size-3 text-rose-400 shrink-0 mt-0.5" />
+                        <div key={idx} className="vn-vector">
+                          <AlertTriangle size={10} style={{ flexShrink: 0, marginTop: 1 }} />
                           <span>{vec}</span>
                         </div>
                       ))
                     ) : (
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
-                        <CheckCircle2 className="size-3 text-emerald-400 shrink-0" />
-                        <span>Parameters conform cleanly to declared intent charter</span>
+                      <div className="vn-vector is-clean">
+                        <CheckCircle2 size={10} style={{ flexShrink: 0, marginTop: 1 }} />
+                        <span>Parameters conform cleanly to declared intent</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* 3. Cryptographic Proof & Receipt Rail */}
-                <div className="p-3 rounded-lg border border-slate-800 bg-[#090d16] space-y-2.5 font-mono text-xs">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                    <div className="flex items-center gap-1.5 text-slate-300 font-semibold text-[11px]">
-                      <Lock className="size-3 text-slate-400" />
-                      <span>CRYPTOGRAPHIC ATTESTATION</span>
+                {/* ── CRYPTOGRAPHIC ATTESTATION ── */}
+                <div className="vn-attestation">
+                  <div className="vn-row-between" style={{ marginBottom: 8, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
+                    <div className="vn-row">
+                      <Lock size={11} style={{ color: 'var(--ink-muted)' }} />
+                      <span className="vn-panel-title">Cryptographic attestation</span>
                     </div>
-                    <Badge variant="outline">EIP-712</Badge>
+                    <span className="vn-badge vn-badge-amber">EIP-712</span>
                   </div>
-
-                  <div className="space-y-1 text-[11px]">
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">State Transition Root:</span>
-                      <span className="text-slate-300 truncate max-w-[160px]">{activeScenario.receipt.stateRoot}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Block Hash:</span>
-                      <span className="text-slate-400">{activeScenario.receipt.simulatedBlockHash}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-500">Capital Shielded:</span>
-                      <span className="text-amber-400 font-medium tabular-nums">{activeScenario.receipt.gasSaved}</span>
-                    </div>
+                  <div className="vn-hash-row">
+                    <span className="vn-hash-key">State root</span>
+                    <span className="vn-hash-val">{activeScenario.receipt.stateRoot}</span>
                   </div>
-
-                  <div className="flex gap-2 pt-1">
+                  <div className="vn-hash-row">
+                    <span className="vn-hash-key">Block hash</span>
+                    <span className="vn-hash-val">{activeScenario.receipt.simulatedBlockHash}</span>
+                  </div>
+                  <div className="vn-hash-row">
+                    <span className="vn-hash-key">Capital shielded</span>
+                    <span className="vn-hash-val is-amber">{activeScenario.receipt.gasSaved}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                     <Button
-                      variant="secondary"
-                      size="sm"
+                      variant="secondary" size="sm"
                       onClick={() => setShowReceiptModal(true)}
-                      className="flex-1 text-[11px] font-mono"
+                      className="flex-1 font-mono text-[11px]"
                       leftIcon={<FileCode className="size-3" />}
                     >
-                      VIEW RECEIPT
+                      View receipt
                     </Button>
                     <Button
-                      variant="outline"
-                      size="sm"
+                      variant="outline" size="sm"
                       onClick={handleCopyReceipt}
-                      className="flex-1 text-[11px] font-mono text-slate-400 hover:text-slate-200"
+                      className="flex-1 font-mono text-[11px]"
                       leftIcon={receiptCopied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
                     >
-                      {receiptCopied ? 'COPIED' : 'COPY JSON'}
+                      {receiptCopied ? 'Copied' : 'Copy JSON'}
                     </Button>
                   </div>
                 </div>
-              </div>
+              </>
             ) : (
-              /* Blind Mode Experience */
-              <div className="p-4 space-y-4 font-mono text-xs">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="text-rose-400 font-bold flex items-center gap-1.5">
-                    <XCircle className="size-4" />
-                    <span>Unprotected Standard Wallet (Blind Sign)</span>
-                  </span>
-                  <Badge variant="destructive" size="sm">Blind</Badge>
+              /* ── BLIND SIGN SIMULATOR ── */
+              <div style={{ padding: 14 }} className="vn-stack">
+                <div className="vn-row-between" style={{ paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+                  <div className="vn-row">
+                    <XCircle size={14} style={{ color: 'var(--rose)' }} />
+                    <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: '#fca5a5' }}>
+                      Unprotected wallet — blind sign
+                    </span>
+                  </div>
+                  <span className="vn-badge vn-badge-critical">Blind</span>
                 </div>
 
-                <div className="space-y-1.5">
-                  <span className="text-slate-400 block text-[11px]">Without Vernier, you are prompted to sign raw unverified calldata:</span>
-                  <div className="p-3 rounded bg-[#090d16] border border-slate-800 text-slate-400 break-all leading-relaxed text-[11px]">
-                    0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff...
-                  </div>
+                <p style={{ fontSize: 12, color: 'var(--ink-muted)' }}>
+                  Without Vernier, you're asked to sign raw unverified calldata:
+                </p>
+                <div style={{
+                  padding: '10px 12px', borderRadius: 8,
+                  border: '1px solid var(--border)', background: 'var(--bg)',
+                  fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-muted)',
+                  wordBreak: 'break-all', lineHeight: 1.6,
+                }}>
+                  0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff...
                 </div>
 
                 {hasSimulatedBlindSign ? (
-                  <div className="p-3.5 rounded border border-rose-600 bg-rose-950/60 text-center space-y-2">
-                    <div className="text-rose-300 font-bold flex items-center justify-center gap-2">
-                      <ShieldAlert className="size-4 text-rose-400" />
-                      <span>CRITICAL EXPLOIT EXECUTED: ASSETS DRAINED</span>
+                  <div style={{
+                    padding: 14, borderRadius: 8,
+                    border: '1px solid rgba(244,63,94,0.4)',
+                    background: 'rgba(244,63,94,0.06)',
+                  }} className="vn-stack">
+                    <div className="vn-row">
+                      <ShieldAlert size={14} style={{ color: 'var(--rose)' }} />
+                      <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: '#fca5a5', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Critical exploit executed
+                      </span>
                     </div>
-                    <p className="text-xs text-rose-200 font-sans">
-                      You clicked Confirm. In the next block, the attacker executed transferFrom and drained <strong className="tabular-nums">{explainer.victimLoss}</strong>.
+                    <p style={{ fontSize: 12, color: '#fca5a5', lineHeight: 1.5 }}>
+                      You clicked Confirm. In the next block, the attacker ran transferFrom and drained{' '}
+                      <strong>{explainer.victimLoss}</strong>.
                     </p>
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => setForensicsMode('protected')}
-                      rightIcon={<ArrowRight className="size-3" />}
-                      className="mt-1"
-                    >
-                      Restore Vernier Protection
+                    <Button variant="primary" size="sm" onClick={() => setForensicsMode('protected')}
+                      rightIcon={<ArrowRight className="size-3" />}>
+                      Restore Vernier protection
                     </Button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between gap-3 pt-2">
-                    <span className="text-slate-500 text-[11px] font-sans">
-                      Clicking Confirm signs blind calldata...
+                  <div className="vn-row-between">
+                    <span style={{ fontSize: 11, color: 'var(--ink-muted)' }}>
+                      Signing confirms raw calldata to the contract...
                     </span>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setForensicsMode('protected')}
-                      >
+                    <div className="vn-row" style={{ gap: 8 }}>
+                      <Button variant="outline" size="sm" onClick={() => setForensicsMode('protected')}>
                         Cancel
                       </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
+                      <Button variant="secondary" size="sm"
                         onClick={() => setHasSimulatedBlindSign(true)}
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold"
-                      >
-                        Sign Blind
+                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold">
+                        Sign blind
                       </Button>
                     </div>
                   </div>
@@ -734,61 +661,50 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         </div>
       </div>
 
-      {/* EIP-712 Signed Attestation Modal */}
+      {/* ── EIP-712 Receipt Modal ── */}
       {showReceiptModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 50,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 16, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
+        }}>
           <Card className="w-full max-w-xl p-5 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-              <div className="flex items-center gap-2 font-mono text-xs font-semibold text-slate-200">
-                <ShieldCheck className="size-4 text-amber-400" />
-                <span>SIGNED EIP-712 ATTESTATION RECEIPT</span>
+            <div className="vn-row-between" style={{ paddingBottom: 10, borderBottom: '1px solid var(--border)' }}>
+              <div className="vn-row">
+                <ShieldCheck size={14} style={{ color: 'var(--amber)' }} />
+                <span style={{ fontFamily: 'var(--mono)', fontSize: 11, fontWeight: 700, color: 'var(--ink)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Signed EIP-712 attestation
+                </span>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
+              <Button variant="ghost" size="sm"
                 onClick={() => setShowReceiptModal(false)}
-                className="text-slate-500 hover:text-slate-200 text-xs font-mono h-auto p-1"
-              >
+                className="text-slate-500 hover:text-slate-200 font-mono text-xs h-auto p-1">
                 ESC
               </Button>
             </div>
-
-            <pre className="p-3 rounded bg-[#090d16] border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto max-h-64 leading-relaxed">
-              {JSON.stringify(
-                {
-                  version: 'Vernier-v1.8',
-                  stateRoot: activeScenario.receipt.stateRoot,
-                  attestation: activeScenario.receipt.eip712Attestation,
-                  intent: activeScenario.intent,
-                  metrics: activeScenario.metrics,
-                  storageDeltas: activeScenario.storageDeltas,
-                  signatureProof: {
-                    signer: '0xDA9...e6B3',
-                    algorithm: 'secp256k1-keccak256',
-                    validUntilBlock: 21894200,
-                  },
-                },
-                null,
-                2
-              )}
+            <pre style={{
+              padding: 12, borderRadius: 8, border: '1px solid var(--border)',
+              background: 'var(--bg)', fontFamily: 'var(--mono)', fontSize: 11,
+              color: 'var(--ink-secondary)', overflow: 'auto', maxHeight: 260, lineHeight: 1.6,
+              whiteSpace: 'pre',
+            }}>
+              {JSON.stringify({
+                version: 'Vernier-v1.8',
+                stateRoot: activeScenario.receipt.stateRoot,
+                attestation: activeScenario.receipt.eip712Attestation,
+                intent: activeScenario.intent,
+                metrics: activeScenario.metrics,
+                storageDeltas: activeScenario.storageDeltas,
+                signatureProof: { signer: '0xDA9...e6B3', algorithm: 'secp256k1-keccak256', validUntilBlock: 21894200 },
+              }, null, 2)}
             </pre>
-
-            <div className="flex items-center justify-between gap-3 pt-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleCopyReceipt}
-                leftIcon={receiptCopied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
-              >
-                {receiptCopied ? 'COPIED' : 'COPY RECEIPT JSON'}
+            <div className="vn-row-between">
+              <Button variant="secondary" size="sm" onClick={handleCopyReceipt}
+                leftIcon={receiptCopied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}>
+                {receiptCopied ? 'Copied' : 'Copy receipt JSON'}
               </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowReceiptModal(false)}
-              >
-                CLOSE
+              <Button variant="outline" size="sm" onClick={() => setShowReceiptModal(false)}>
+                Close
               </Button>
             </div>
           </Card>
