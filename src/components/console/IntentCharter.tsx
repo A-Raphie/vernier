@@ -1,9 +1,8 @@
-'use client';
-
 import React from 'react';
 import { ExternalLink, CheckCircle, AlertCircle, Compass } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
 import { RiskGauge } from './RiskGauge';
+import { Badge, Card } from '../ui';
 
 interface IntentCharterProps {
   scenario: SimulationScenario;
@@ -13,7 +12,7 @@ export const IntentCharter: React.FC<IntentCharterProps> = ({ scenario }) => {
   return (
     <div className="flex flex-col gap-4">
       {/* Intent Charter Box */}
-      <div className="p-4 rounded border border-[#1e293b] bg-[#0e131f] space-y-3">
+      <Card className="p-4 space-y-3">
         <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
           <div className="flex items-center gap-2">
             <Compass className="size-3.5 text-amber-400" />
@@ -21,7 +20,7 @@ export const IntentCharter: React.FC<IntentCharterProps> = ({ scenario }) => {
               INTENT CHARTER
             </span>
           </div>
-          <span className="font-mono text-[10px] text-slate-500">PARSER v4.1</span>
+          <Badge variant="outline">PARSER v4.1</Badge>
         </div>
 
         <div className="p-3 rounded border border-slate-800 bg-[#090d16] space-y-1.5">
@@ -41,15 +40,13 @@ export const IntentCharter: React.FC<IntentCharterProps> = ({ scenario }) => {
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-mono uppercase text-slate-400">Target Contract</span>
             {scenario.intent.verifiedSource ? (
-              <span className="flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald-800/60 bg-emerald-950/30 text-emerald-300">
-                <CheckCircle className="size-2.5 text-emerald-400" />
+              <Badge variant="success" dot>
                 VERIFIED
-              </span>
+              </Badge>
             ) : (
-              <span className="flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-rose-800/60 bg-rose-950/30 text-rose-300">
-                <AlertCircle className="size-2.5 text-rose-400" />
+              <Badge variant="destructive" dot dotPulse>
                 UNVERIFIED
-              </span>
+              </Badge>
             )}
           </div>
 
@@ -63,7 +60,7 @@ export const IntentCharter: React.FC<IntentCharterProps> = ({ scenario }) => {
             <span>Value: {scenario.intent.amount}</span>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Security Risk Index Gauge */}
       <RiskGauge

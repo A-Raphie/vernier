@@ -1,8 +1,7 @@
-'use client';
-
 import React from 'react';
 import { Terminal, ShieldAlert } from 'lucide-react';
 import { OpcodeStep } from '../../lib/types';
+import { Card, Badge } from '../ui';
 
 interface BytecodeTraceProps {
   opcodes: OpcodeStep[];
@@ -16,7 +15,7 @@ export const BytecodeTrace: React.FC<BytecodeTraceProps> = ({
   onSelectStep,
 }) => {
   return (
-    <div className="p-4 rounded border border-[#1e293b] bg-[#0e131f] space-y-3">
+    <Card className="p-4 space-y-3">
       <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
         <div className="flex items-center gap-2">
           <Terminal className="size-3.5 text-slate-400" />
@@ -24,7 +23,7 @@ export const BytecodeTrace: React.FC<BytecodeTraceProps> = ({
             BYTECODE TRACE
           </span>
         </div>
-        <span className="text-[10px] font-mono text-slate-500">DISASSEMBLY</span>
+        <Badge variant="outline">DISASSEMBLY</Badge>
       </div>
 
       {/* Disassembly Stream with Step Highlighting */}
@@ -65,10 +64,10 @@ export const BytecodeTrace: React.FC<BytecodeTraceProps> = ({
               )}
 
               {item.isBlocked && (
-                <span className="ml-auto text-[9px] uppercase font-bold text-rose-400 flex items-center gap-1 border border-rose-800/80 px-1 rounded bg-rose-950/50">
-                  <ShieldAlert className="size-2.5" />
+                <Badge variant="destructive" size="sm" className="ml-auto text-[9px] py-0 px-1">
+                  <ShieldAlert className="size-2.5 mr-0.5" />
                   BLOCKED
-                </span>
+                </Badge>
               )}
             </button>
           );
@@ -79,6 +78,6 @@ export const BytecodeTrace: React.FC<BytecodeTraceProps> = ({
         <span>Click any opcode to jump</span>
         <span>VIEM EVM TRACE</span>
       </div>
-    </div>
+    </Card>
   );
 };

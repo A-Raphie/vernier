@@ -9,6 +9,7 @@ import { BytecodeTrace } from '../console/BytecodeTrace';
 import { ReceiptRail } from '../proof/ReceiptRail';
 import { JudgeHumanMode } from '../console/JudgeHumanMode';
 import { SurfaceTab } from '../navigation/ChromeHeader';
+import { Button, Badge, Card, TabsList, TabsTrigger } from '../ui';
 import { ArrowLeft, UserCheck, Binary, Sliders } from 'lucide-react';
 
 interface Surface2CockpitProps {
@@ -37,13 +38,14 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         {/* Top Cockpit Bar: Back to Overview + Hero Metric + Scenario Switcher + View Mode Toggle */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="outline"
+              size="icon"
               onClick={() => onNavigateTab('overview')}
-              className="p-1.5 rounded border border-slate-800 bg-[#0e131f] hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors cursor-pointer"
               title="Return to Overview"
             >
               <ArrowLeft className="size-4" />
-            </button>
+            </Button>
             <div>
               <div className="flex items-center gap-2">
                 <span className="size-2 rounded-full bg-amber-400" />
@@ -59,55 +61,43 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
 
           <div className="flex flex-wrap items-center gap-3">
             {/* View Mode Switcher: Plain English (Judge) vs Deep Metrology (Auditor) */}
-            <div className="flex items-center gap-1 p-1 rounded-lg border border-amber-500/40 bg-[#0e131f]">
-              <button
+            <TabsList>
+              <TabsTrigger
+                active={cockpitViewMode === 'human'}
                 onClick={() => setCockpitViewMode('human')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                  cockpitViewMode === 'human'
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                icon={<UserCheck className="size-3.5" />}
               >
-                <UserCheck className="size-3.5" />
-                <span>Plain English (Judge Mode)</span>
-              </button>
-              <button
+                Plain English (Judge Mode)
+              </TabsTrigger>
+              <TabsTrigger
+                active={cockpitViewMode === 'auditor'}
                 onClick={() => setCockpitViewMode('auditor')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                  cockpitViewMode === 'auditor'
-                    ? 'bg-[#151c2e] text-white border border-slate-700 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
+                icon={<Binary className="size-3.5" />}
               >
-                <Binary className="size-3.5" />
-                <span>Deep Metrology (Auditor Mode)</span>
-              </button>
-            </div>
+                Deep Metrology (Auditor Mode)
+              </TabsTrigger>
+            </TabsList>
 
             {/* Scenario Switcher Tabs */}
-            <div className="flex items-center gap-1.5 p-1 rounded border border-[#1e293b] bg-[#0e131f]">
+            <TabsList>
               {SCENARIOS.map((s) => (
-                <button
+                <TabsTrigger
                   key={s.id}
+                  active={s.id === selectedScenarioId}
                   onClick={() => onSelectScenario(s.id)}
-                  className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                    s.id === selectedScenarioId
-                      ? 'bg-[#151c2e] text-white border border-slate-700 font-medium'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
                 >
                   <span className={`inline-block size-1.5 rounded-full mr-1.5 ${
                     s.riskLevel === 'CRITICAL' ? 'bg-rose-500' : s.riskLevel === 'HIGH' ? 'bg-amber-400' : 'bg-emerald-400'
                   }`} />
                   {s.name.split(' ')[0]}
-                </button>
+                </TabsTrigger>
               ))}
-            </div>
+            </TabsList>
           </div>
         </div>
 
         {/* Hero Metric Banner: Exactly ONE primary metric with context */}
-        <div className="p-4 rounded border border-[#1e293b] bg-[#0e131f] flex flex-wrap items-center justify-between gap-4">
+        <Card className="p-4 flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-0.5">
             <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
               PRIMARY HAZARD INDEX
@@ -118,9 +108,9 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
               }`}>
                 {activeScenario.riskScore}/100
               </span>
-              <span className="text-xs font-mono text-slate-400">
+              <Badge variant={isCritical ? 'destructive' : isClean ? 'success' : 'warning'} dot dotPulse>
                 {activeScenario.riskLevel} VERDICT
-              </span>
+              </Badge>
             </div>
           </div>
 
@@ -140,7 +130,7 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
             <span>•</span>
             <span>Simulation Latency: <strong className="text-cyan-400 tabular-nums">0.42ms</strong></span>
           </div>
-        </div>
+        </Card>
 
         {/* Render either Judge Human Mode (Default) or Deep Metrology Mode */}
         {cockpitViewMode === 'human' ? (

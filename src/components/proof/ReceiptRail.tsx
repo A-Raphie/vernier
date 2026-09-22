@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, ShieldAlert, FileCode, Check, Copy, Lock, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SimulationScenario } from '../../lib/types';
+import { Button, Badge, Card } from '../ui';
 
 interface ReceiptRailProps {
   scenario: SimulationScenario;
@@ -35,7 +36,7 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
   };
 
   return (
-    <div className="p-4 rounded border border-[#1e293b] bg-[#0e131f] space-y-3">
+    <Card className="p-4 space-y-3">
       <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
         <div className="flex items-center gap-2">
           <Lock className="size-3.5 text-slate-400" />
@@ -43,9 +44,7 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
             CRYPTOGRAPHIC PROOF
           </span>
         </div>
-        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 text-slate-300 font-semibold">
-          EIP-712
-        </span>
+        <Badge variant="outline">EIP-712</Badge>
       </div>
 
       {/* Proof Hash Fields */}
@@ -73,51 +72,59 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
         </div>
       </div>
 
-      {/* Single Primary Action CTA */}
+      {/* Single Primary Action CTA using harvested Button */}
       <div className="space-y-2 pt-1">
         {isHazard ? (
-          <button
+          <Button
+            variant="destructive"
+            size="default"
             onClick={handlePrimaryAction}
-            className="w-full py-2.5 px-4 rounded border border-rose-600 bg-rose-600 hover:bg-rose-500 text-white font-mono font-bold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            className="w-full font-bold uppercase tracking-wider"
+            leftIcon={<ShieldAlert className="size-3.5" />}
           >
-            <ShieldAlert className="size-3.5" />
-            <span>{actionConfirmed ? 'TRANSACTION HALTED & ISOLATED' : 'HALT TRANSACTION & ISOLATE'}</span>
-          </button>
+            {actionConfirmed ? 'TRANSACTION HALTED & ISOLATED' : 'HALT TRANSACTION & ISOLATE'}
+          </Button>
         ) : (
-          <button
+          <Button
+            variant="primary"
+            size="default"
             onClick={handlePrimaryAction}
-            className="w-full py-2.5 px-4 rounded border border-emerald-600 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-mono font-bold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            className="w-full font-bold uppercase tracking-wider"
+            leftIcon={<CheckCircle2 className="size-3.5" />}
           >
-            <CheckCircle2 className="size-3.5" />
-            <span>{actionConfirmed ? 'BROADCAST DISPATCHED TO MEMPOOL' : 'APPROVE & BROADCAST TRANSACTION'}</span>
-          </button>
+            {actionConfirmed ? 'BROADCAST DISPATCHED TO MEMPOOL' : 'APPROVE & BROADCAST TRANSACTION'}
+          </Button>
         )}
 
-        {/* Secondary Action */}
-        <button
+        {/* Secondary Action using harvested Button */}
+        <Button
+          variant="secondary"
+          size="default"
           onClick={() => setShowModal(true)}
-          className="w-full py-2 px-3 rounded border border-slate-800 bg-[#090d16] hover:bg-slate-800/80 text-slate-400 hover:text-slate-200 font-mono text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          className="w-full text-slate-300"
+          leftIcon={<FileCode className="size-3.5" />}
         >
-          <FileCode className="size-3.5" />
-          <span>VIEW SIGNED ATTESTATION RECEIPT</span>
-        </button>
+          VIEW SIGNED ATTESTATION RECEIPT
+        </Button>
       </div>
 
       {/* Attestation Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-xl bg-[#0e131f] border border-slate-800 rounded-lg p-5 shadow-2xl space-y-4">
+          <Card className="w-full max-w-xl p-5 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
               <div className="flex items-center gap-2 font-mono text-xs font-semibold text-slate-200">
                 <ShieldCheck className="size-4 text-amber-400" />
                 <span>SIGNED EIP-712 ATTESTATION RECEIPT</span>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowModal(false)}
-                className="text-slate-500 hover:text-slate-200 text-xs font-mono cursor-pointer"
+                className="text-slate-500 hover:text-slate-200 text-xs font-mono h-auto p-1"
               >
                 ESC
-              </button>
+              </Button>
             </div>
 
             <pre className="p-3 rounded bg-[#090d16] border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto max-h-64 leading-relaxed">
@@ -141,24 +148,26 @@ export const ReceiptRail: React.FC<ReceiptRailProps> = ({ scenario }) => {
             </pre>
 
             <div className="flex items-center justify-between gap-3 pt-2">
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-700 bg-[#090d16] hover:bg-slate-800 text-xs font-mono text-slate-200 cursor-pointer"
+                leftIcon={copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
               >
-                {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
-                <span>{copied ? 'COPIED' : 'COPY RECEIPT JSON'}</span>
-              </button>
+                {copied ? 'COPIED' : 'COPY RECEIPT JSON'}
+              </Button>
 
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-1.5 rounded border border-slate-700 bg-slate-800 text-slate-200 font-mono text-xs font-semibold hover:bg-slate-700 cursor-pointer"
               >
                 CLOSE
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

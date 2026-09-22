@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { SimulationScenario } from '../../lib/types';
 import { SCENARIOS } from '../../data/attack-vectors';
 import { SurfaceTab } from '../navigation/ChromeHeader';
+import { Button, Badge, Card, TabsList, TabsTrigger } from '../ui';
 import { ShieldCheck, Copy, Check, Download, ArrowLeft, Lock, FileCode, CheckCircle2 } from 'lucide-react';
 
 interface Surface3ProofRailProps {
@@ -59,13 +60,14 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
         {/* Top Proof Bar: Back button + Title + Scenario Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e293b] pb-4">
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="outline"
+              size="icon"
               onClick={() => onNavigateTab('overview')}
-              className="p-1.5 rounded border border-slate-800 bg-[#0e131f] hover:bg-slate-800 text-slate-400 hover:text-slate-100 transition-colors cursor-pointer"
               title="Return to Overview"
             >
               <ArrowLeft className="size-4" />
-            </button>
+            </Button>
             <div>
               <div className="flex items-center gap-2">
                 <Lock className="size-3.5 text-amber-400" />
@@ -80,25 +82,21 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
           </div>
 
           {/* Scenario Selector */}
-          <div className="flex items-center gap-1.5 p-1 rounded border border-[#1e293b] bg-[#0e131f]">
+          <TabsList>
             {SCENARIOS.map((s) => (
-              <button
+              <TabsTrigger
                 key={s.id}
+                active={s.id === selectedScenarioId}
                 onClick={() => onSelectScenario(s.id)}
-                className={`px-3 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                  s.id === selectedScenarioId
-                    ? 'bg-[#1e293b] text-white font-medium shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
               >
                 {s.name.split(' ')[0]}
-              </button>
+              </TabsTrigger>
             ))}
-          </div>
+          </TabsList>
         </div>
 
         {/* Verifiable Certificate Card */}
-        <div className="p-6 rounded border border-[#1e293b] bg-[#0e131f] space-y-6">
+        <Card className="p-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
@@ -113,40 +111,42 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-700 bg-[#090d16] hover:bg-slate-800 text-xs font-mono text-slate-200 transition-colors cursor-pointer"
+                leftIcon={copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
               >
-                {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
-                <span>{copied ? 'COPIED JSON' : 'COPY RAW JSON'}</span>
-              </button>
+                {copied ? 'COPIED JSON' : 'COPY RAW JSON'}
+              </Button>
 
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={handleDownload}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-700 bg-[#090d16] hover:bg-slate-800 text-xs font-mono text-slate-200 transition-colors cursor-pointer"
+                leftIcon={<Download className="size-3.5" />}
               >
-                <Download className="size-3.5" />
-                <span>DOWNLOAD (.JSON)</span>
-              </button>
+                DOWNLOAD (.JSON)
+              </Button>
             </div>
           </div>
 
           {/* Key Attestation Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
-            <div className="p-4 rounded border border-slate-800 bg-[#090d16] space-y-1">
+            <Card className="p-4 space-y-1 bg-[#090d16]">
               <div className="text-[10px] text-slate-500 uppercase">SHA-256 STATE ROOT</div>
               <div className="text-slate-200 truncate">{activeScenario.receipt.stateRoot}</div>
-            </div>
+            </Card>
 
-            <div className="p-4 rounded border border-slate-800 bg-[#090d16] space-y-1">
+            <Card className="p-4 space-y-1 bg-[#090d16]">
               <div className="text-[10px] text-slate-500 uppercase">SIMULATION BLOCK</div>
               <div className="text-slate-200">{activeScenario.receipt.simulatedBlockHash}</div>
-            </div>
+            </Card>
 
-            <div className="p-4 rounded border border-slate-800 bg-[#090d16] space-y-1">
+            <Card className="p-4 space-y-1 bg-[#090d16]">
               <div className="text-[10px] text-slate-500 uppercase">CAPITAL PROTECTED</div>
               <div className="text-amber-400 font-bold tabular-nums">{activeScenario.receipt.gasSaved}</div>
-            </div>
+            </Card>
           </div>
 
           {/* Raw Verifiable JSON Container */}
@@ -173,7 +173,7 @@ export const Surface3ProofRail: React.FC<Surface3ProofRailProps> = ({
               <li><strong>ERC-1967:</strong> Standardized proxy implementation slot validation protects against malicious delegatecall hijacks.</li>
             </ul>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

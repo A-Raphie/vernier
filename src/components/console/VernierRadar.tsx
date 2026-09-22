@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useState } from 'react';
 import { Sliders, Fuel, Database, ShieldAlert, Play, Pause, SkipBack, SkipForward } from 'lucide-react';
 import { SimulationScenario } from '../../lib/types';
+import { Button, Badge, Card } from '../ui';
 
 interface VernierRadarProps {
   scenario: SimulationScenario;
@@ -35,7 +34,7 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
   const currentGas = Math.round(scenario.metrics.gasSimulated * gasFraction);
 
   return (
-    <div className="flex flex-col gap-4 p-5 rounded border border-[#1e293b] bg-[#0e131f]">
+    <Card className="flex flex-col gap-4 p-5">
       {/* Console Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#1e293b] pb-3">
         <div className="flex items-center gap-2">
@@ -57,22 +56,26 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
             VERNIER STEP CALIPER
           </span>
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              variant="secondary"
+              size="icon"
               onClick={handlePrev}
               disabled={activeStepIndex === 0}
-              className="p-1 rounded border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Previous execution step"
+              className="size-7"
             >
               <SkipBack className="size-3" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
               onClick={handleNext}
               disabled={activeStepIndex === totalSteps - 1}
-              className="p-1 rounded border border-slate-700 bg-slate-800/80 text-slate-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
               aria-label="Next execution step"
+              className="size-7"
             >
               <SkipForward className="size-3" />
-            </button>
+            </Button>
             <span className="font-mono text-amber-300 tabular-nums font-semibold ml-1">
               OPCODE #{currentOpcode.step}
             </span>
@@ -228,13 +231,13 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
                   </td>
                   <td className="py-2 px-3 text-right">
                     {delta.isHazardous ? (
-                      <span className="px-1.5 py-0.5 rounded border border-rose-800/60 bg-rose-950/40 text-[10px] text-rose-300 font-semibold">
+                      <Badge variant="destructive" size="sm">
                         HAZARD
-                      </span>
+                      </Badge>
                     ) : (
-                      <span className="px-1.5 py-0.5 rounded border border-emerald-800/60 bg-emerald-950/40 text-[10px] text-emerald-300 font-semibold">
+                      <Badge variant="success" size="sm">
                         CONFORM
-                      </span>
+                      </Badge>
                     )}
                   </td>
                 </tr>
@@ -259,6 +262,6 @@ export const VernierRadar: React.FC<VernierRadarProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

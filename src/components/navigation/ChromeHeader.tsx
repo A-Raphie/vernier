@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ChevronRight } from 'lucide-react';
+import { Button, Badge, TabsList, TabsTrigger } from '../ui';
 
 export type SurfaceTab = 'overview' | 'cockpit' | 'proof';
 
@@ -21,7 +22,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={() => onTabChange('overview')}
-            className="flex items-center gap-2.5 cursor-pointer text-left"
+            className="flex items-center gap-2.5 cursor-pointer text-left focus:outline-none"
           >
             <div className="size-7 rounded bg-[#151c2e] border border-slate-700/80 flex items-center justify-center text-amber-400 font-mono font-bold text-xs">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -37,72 +38,61 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
             </div>
             <span className="font-mono text-sm font-bold tracking-wider text-white">VERNIER</span>
           </button>
-          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800/80 text-slate-300 hidden sm:inline-block">
+          <Badge variant="default" className="hidden sm:inline-flex">
             v1.8 · EIP-712
-          </span>
+          </Badge>
         </div>
 
         {/* Cluster 2 (Center): Plain-Noun Navigation Tabs */}
-        <nav className="flex items-center gap-1 bg-[#0e131f] p-1 rounded-lg border border-[#1e293b]">
-          <button
+        <TabsList>
+          <TabsTrigger
+            active={activeTab === 'overview'}
             onClick={() => onTabChange('overview')}
-            className={`px-3 py-1 rounded font-mono text-xs transition-colors cursor-pointer ${
-              activeTab === 'overview'
-                ? 'bg-[#1e293b] text-white font-medium shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
           >
             Overview
-          </button>
+          </TabsTrigger>
 
-          <button
+          <TabsTrigger
+            active={activeTab === 'cockpit'}
             onClick={() => onTabChange('cockpit')}
-            className={`px-3 py-1 rounded font-mono text-xs transition-colors cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'cockpit'
-                ? 'bg-[#1e293b] text-white font-medium shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
           >
             <span>Cockpit</span>
             <span className="size-1.5 rounded-full bg-amber-400" />
-          </button>
+          </TabsTrigger>
 
-          <button
+          <TabsTrigger
+            active={activeTab === 'proof'}
             onClick={() => onTabChange('proof')}
-            className={`px-3 py-1 rounded font-mono text-xs transition-colors cursor-pointer ${
-              activeTab === 'proof'
-                ? 'bg-[#1e293b] text-white font-medium shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
           >
             Proof
-          </button>
-        </nav>
+          </TabsTrigger>
+        </TabsList>
 
         {/* Cluster 3 (Right): Live Provenance Pill + Single Compact Action */}
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded border border-[#1e293b] bg-[#0e131f] font-mono text-xs text-slate-300">
-            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <Badge variant="secondary" dot dotPulse className="hidden md:inline-flex py-1 px-2.5">
             <span className="text-slate-400">Live EVM ·</span>
             <span className="text-slate-200 tabular-nums font-medium">$142M Shielded</span>
-          </div>
+          </Badge>
 
           {activeTab === 'cockpit' ? (
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => onTabChange('proof')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-mono text-xs transition-colors cursor-pointer"
+              rightIcon={<ChevronRight className="size-3.5 text-slate-400" />}
             >
-              <span>VIEW PROOF</span>
-              <ChevronRight className="size-3.5 text-slate-400" />
-            </button>
+              VIEW PROOF
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="primary"
+              size="sm"
               onClick={() => onTabChange('cockpit')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-amber-500/80 bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono text-xs font-semibold tracking-wide transition-colors cursor-pointer shadow-sm"
+              rightIcon={<ChevronRight className="size-3.5" />}
             >
-              <span>OPEN COCKPIT</span>
-              <ChevronRight className="size-3.5" />
-            </button>
+              OPEN COCKPIT
+            </Button>
           )}
         </div>
       </div>

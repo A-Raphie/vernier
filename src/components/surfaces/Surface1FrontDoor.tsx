@@ -5,6 +5,7 @@ import { ArrowRight, ShieldCheck, Lock, Cpu, ShieldAlert, CheckCircle2, ChevronR
 import { SCENARIOS } from '../../data/attack-vectors';
 import { EconomicGrid } from '../frontdoor/EconomicGrid';
 import { SurfaceTab } from '../navigation/ChromeHeader';
+import { Button, Badge, TabsList, TabsTrigger, Card } from '../ui';
 
 interface Surface1FrontDoorProps {
   onNavigateTab: (tab: SurfaceTab) => void;
@@ -27,10 +28,9 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
       <section className="pt-16 pb-20 px-4 lg:px-8 border-b border-[#1e293b] bg-[#090d16]">
         <div className="max-w-4xl mx-auto text-center space-y-7">
           {/* Beat 1: Monospace Protocol Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-slate-700/80 bg-[#151c2e] text-slate-300 font-mono text-xs">
-            <span className="size-1.5 rounded-full bg-amber-400" />
-            <span>3RD-WEB-HACK 2026 · WEB3 TRANSACTION FIREWALL</span>
-          </div>
+          <Badge variant="secondary" dot dotPulse className="px-3 py-1 text-xs">
+            3RD-WEB-HACK 2026 · WEB3 TRANSACTION FIREWALL
+          </Badge>
 
           {/* Beat 2: Two-Clause Headline (First clause 100%, second clause ~45% opacity) */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight font-sans text-balance leading-[1.12]">
@@ -46,26 +46,28 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
 
           {/* Beat 4: CTA Pair */}
           <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button
+            <Button
+              variant="primary"
+              size="lg"
               onClick={() => onNavigateTab('cockpit')}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded border border-amber-500/80 bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-semibold text-xs tracking-wider transition-colors cursor-pointer shadow-sm"
+              rightIcon={<ArrowRight className="size-3.5" />}
             >
-              <span>OPEN WORKING COCKPIT</span>
-              <ArrowRight className="size-3.5" />
-            </button>
+              OPEN WORKING COCKPIT
+            </Button>
 
-            <button
+            <Button
+              variant="outline"
+              size="lg"
               onClick={() => onNavigateTab('proof')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded border border-[#1e293b] bg-[#0e131f] hover:bg-[#151c2e] text-slate-300 font-mono text-xs tracking-wide transition-colors cursor-pointer"
+              leftIcon={<FileCode className="size-3.5 text-slate-400" />}
             >
-              <FileCode className="size-3.5 text-slate-400" />
-              <span>VIEW ATTESTATION PROOF</span>
-            </button>
+              VIEW ATTESTATION PROOF
+            </Button>
           </div>
 
           {/* Beat 5: Live Signature Card (Operable Preview Card) */}
           <div className="pt-6 max-w-2xl mx-auto text-left">
-            <div className="p-5 rounded-lg border border-slate-800 bg-[#0e131f] space-y-4 shadow-xl">
+            <Card className="p-5 space-y-4 shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
                   <span className="size-2 rounded-full bg-cyan-400 animate-pulse" />
@@ -73,21 +75,18 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                 </div>
 
                 {/* Scenario Toggle */}
-                <div className="flex items-center gap-1 bg-[#090d16] p-0.5 rounded border border-slate-800">
+                <TabsList className="p-0.5">
                   {SCENARIOS.map((s) => (
-                    <button
+                    <TabsTrigger
                       key={s.id}
+                      active={s.id === selectedScenarioId}
                       onClick={() => onSelectScenario(s.id)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors cursor-pointer ${
-                        s.id === selectedScenarioId
-                          ? 'bg-[#1e293b] text-white font-medium'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
+                      className="px-2 py-0.5 text-[11px]"
                     >
                       {s.name.split(' ')[0]}
-                    </button>
+                    </TabsTrigger>
                   ))}
-                </div>
+                </TabsList>
               </div>
 
               {/* Intercept Data Summary: Promised vs Reality */}
@@ -110,9 +109,9 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                     <span className="text-[10px] text-cyan-400 font-mono">0.42ms</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className={isCritical ? 'text-rose-400 font-bold font-sans' : isClean ? 'text-emerald-400 font-bold font-sans' : 'text-amber-400 font-bold font-sans'}>
+                    <Badge variant={isCritical ? 'destructive' : isClean ? 'success' : 'warning'}>
                       {isClean ? 'SAFE TO SIGN' : 'CRITICAL THREAT BLOCKED'}
-                    </span>
+                    </Badge>
                     <span className="text-[10px] text-slate-500 tabular-nums">
                       {activeScenario.metrics.storageSlotsTouched} slots touched
                     </span>
@@ -139,15 +138,17 @@ export const Surface1FrontDoor: React.FC<Surface1FrontDoorProps> = ({
                   )}
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onNavigateTab('cockpit')}
-                  className="flex items-center gap-1 text-amber-400 hover:text-amber-300 font-semibold cursor-pointer ml-auto font-mono text-xs"
+                  className="text-amber-400 hover:text-amber-300 ml-auto"
+                  rightIcon={<ChevronRight className="size-3.5" />}
                 >
-                  <span>SEE JUDGE WALKTHROUGH</span>
-                  <ChevronRight className="size-3.5" />
-                </button>
+                  SEE JUDGE WALKTHROUGH
+                </Button>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Trust Indicators */}
