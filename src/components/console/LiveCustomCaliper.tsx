@@ -130,27 +130,54 @@ export const LiveCustomCaliper: React.FC = () => {
     setIsSimulating(true);
     setTimeout(() => {
       setIsSimulating(false);
-      const isClean = selectedPattern === 'safe';
+      const cleanCalldata = customCalldata.trim().toLowerCase();
+      
+      // Dynamic bytecode / calldata inspection
+      const hasInfiniteAllowance =
+        cleanCalldata.includes('ffffffffffffffffffffffffffffffff') ||
+        cleanCalldata.startsWith('0x23b872dd') ||
+        cleanCalldata.startsWith('0x095ea7b3');
+      const hasProxyHijack =
+        cleanCalldata.startsWith('0x3659cfe6') ||
+        cleanCalldata.includes('3608') ||
+        cleanCalldata.startsWith('0x4f1ee3d0');
+      const isKnownClean =
+        cleanCalldata.startsWith('0x04e45aaf') ||
+        cleanCalldata.startsWith('0x38ed1739') ||
+        (selectedPattern === 'safe' && !hasInfiniteAllowance && !hasProxyHijack);
+
+      const isThreat = hasInfiniteAllowance || hasProxyHijack || (!isKnownClean && selectedPattern !== 'safe');
+      const threatType = hasInfiniteAllowance
+        ? 'Unbounded Token Allowance (Permit2 Drainer)'
+        : hasProxyHijack
+        ? 'Storage Slot 0x3608 Overwrite (Delegatecall Hijack)'
+        : isThreat
+        ? 'Unverified Calldata Mutation Anomaly'
+        : 'Conforming Route (Safe Parameters)';
+
+      const gasSim = !isThreat ? 128450 : hasInfiniteAllowance ? 184500 : 210400;
+      const gasExp = !isThreat ? 130000 : 45000;
+      const slots = !isThreat ? 0 : hasInfiniteAllowance ? 4 : 2;
+      const policy = !isThreat
+        ? 'SAFE TO BROADCAST: Zero malicious state shift or foreign recipient.'
+        : hasInfiniteAllowance
+        ? 'HALT TRANSACTION. Reject signature. Unbounded approval vector detected.'
+        : 'HALT TRANSACTION: Severe state mutation anomaly detected.';
+
       const result: LiveSimResult = {
         target: targetAddress,
-        isThreat: !isClean,
-        threatType: isClean
-          ? 'Conforming Route (Safe Parameters)'
-          : selectedPattern === 'phish'
-          ? 'Unbounded Token Allowance (Permit2 Drainer)'
-          : 'Storage Slot 0x3608 Overwrite (Delegatecall Hijack)',
-        gasSimulated: isClean ? 128450 : selectedPattern === 'phish' ? 184500 : 210400,
-        gasExpected: isClean ? 130000 : 45000,
-        slotsMutated: isClean ? 0 : selectedPattern === 'phish' ? 4 : 2,
-        policy: isClean
-          ? 'SAFE TO BROADCAST: Zero malicious state shift or foreign recipient.'
-          : 'HALT TRANSACTION: Severe state mutation anomaly detected.',
-        verdict: isClean ? 'PASS' : 'FAIL',
+        isThreat,
+        threatType,
+        gasSimulated: gasSim,
+        gasExpected: gasExp,
+        slotsMutated: slots,
+        policy,
+        verdict: isThreat ? 'FAIL' : 'PASS',
         executionTimeMs: Number((0.35 + Math.random() * 0.1).toFixed(2)),
         stateRoot: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join(''),
       };
       setSimResult(result);
-      if (isClean) {
+      if (!isThreat) {
         confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
       }
     }, 450);
