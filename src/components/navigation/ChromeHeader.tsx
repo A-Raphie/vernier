@@ -4,6 +4,8 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { Button, Badge, TabsList, TabsTrigger } from '../ui';
 
+import { ConnectWalletButton } from './ConnectWalletButton';
+
 export type SurfaceTab = 'overview' | 'cockpit' | 'proof';
 
 interface ChromeHeaderProps {
@@ -67,12 +69,14 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
           </TabsTrigger>
         </TabsList>
 
-        {/* Cluster 3 (Right): Live Provenance Pill + Single Compact Action */}
-        <div className="flex items-center gap-3">
-          <Badge variant="secondary" dot dotPulse className="hidden md:inline-flex py-1 px-2.5">
+        {/* Cluster 3 (Right): Live Provenance Pill + Connect Wallet + CTA */}
+        <div className="flex items-center gap-2.5">
+          <Badge variant="secondary" dot dotPulse className="hidden xl:inline-flex py-1 px-2.5">
             <span className="text-slate-400">Live EVM ·</span>
             <span className="text-slate-200 tabular-nums font-medium">$142M Shielded</span>
           </Badge>
+
+          <ConnectWalletButton />
 
           {activeTab === 'cockpit' ? (
             <Button
@@ -80,6 +84,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
               size="sm"
               onClick={() => onTabChange('proof')}
               rightIcon={<ChevronRight className="size-3.5 text-slate-400" />}
+              className="hidden sm:inline-flex"
             >
               VIEW PROOF
             </Button>
@@ -89,6 +94,7 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
               size="sm"
               onClick={() => onTabChange('cockpit')}
               rightIcon={<ChevronRight className="size-3.5" />}
+              className="hidden sm:inline-flex"
             >
               OPEN COCKPIT
             </Button>

@@ -30,6 +30,7 @@ import { SimulationScenario } from '../../lib/types';
 import { SCENARIOS } from '../../data/attack-vectors';
 import { SurfaceTab } from '../navigation/ChromeHeader';
 import { Button, Badge, Card, TabsList, TabsTrigger } from '../ui';
+import { LiveCustomCaliper } from '../console/LiveCustomCaliper';
 
 interface Surface2CockpitProps {
   selectedScenarioId: string;
@@ -148,6 +149,19 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
                     {s.id === 'permit2-drain' ? 'Airdrop Phishing' : s.id === 'proxy-delegatecall-hijack' ? 'Implementation Hijack' : 'Uniswap Clean'}
                   </TabsTrigger>
                 ))}
+                <TabsTrigger
+                  key="custom-live"
+                  active={selectedScenarioId === 'custom-live'}
+                  onClick={() => {
+                    onSelectScenario('custom-live');
+                    setActiveStepIndex(0);
+                    setBlindSignTestActive(false);
+                  }}
+                  className={selectedScenarioId === 'custom-live' ? '!bg-slate-800 !text-white !border-slate-700 shadow-sm' : '!text-slate-400 hover:!text-slate-200'}
+                >
+                  <Zap className="size-3 text-amber-400 mr-1" />
+                  <span>Live Caliper</span>
+                </TabsTrigger>
               </TabsList>
 
               {/* Execution Latency Chip */}
@@ -216,9 +230,11 @@ export const Surface2Cockpit: React.FC<Surface2CockpitProps> = ({
         </div>
 
         {/* ═════════════════════════════════════════════════════════════════
-            TIER 1: SIMPLE VERDICT (CALM MONOCHROME REFINED PATTERN)
+            TIER 1: SIMPLE VERDICT OR LIVE CUSTOM CALIPER
             ═════════════════════════════════════════════════════════════════ */}
-        {viewMode === 'simple' ? (
+        {selectedScenarioId === 'custom-live' ? (
+          <LiveCustomCaliper />
+        ) : viewMode === 'simple' ? (
           <div className="vn-stack" style={{ gap: 16 }}>
 
             {/* 1. Verdict Strip (Clean Obsidian with White Tabular Metrics) */}
