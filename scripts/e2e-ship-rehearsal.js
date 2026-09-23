@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 const path = require('path');
 
-const PREVIEW_URL = process.env.TEST_URL || 'https://6ab3ebe7afa78c4a36a43b62--tryvernier.netlify.app';
+const PREVIEW_URL = process.env.TEST_URL || 'https://tryvernier.netlify.app';
 
 async function runShipRehearsal() {
   console.log('=====================================================');
