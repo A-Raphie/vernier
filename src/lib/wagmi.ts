@@ -1,6 +1,6 @@
-import { http, createConfig, createConnector } from 'wagmi';
+import { http, createConnector } from 'wagmi';
 import { mainnet, sepolia, base, arbitrum } from 'wagmi/chains';
-import { injected } from '@wagmi/connectors/injected';
+import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { custom } from 'viem';
 
 const SANDBOX_ACCOUNT = '0x4E6b21703E9B01c7811985a109867c4FA6712AB9' as const;
@@ -8,7 +8,7 @@ const STORAGE_KEY = 'vernier_sandbox_connected';
 
 // Custom sandbox connector for instant demo & reviewer accounts
 export const sandboxConnector = createConnector((config) => ({
-  id: 'mock',
+  id: 'sandbox',
   name: 'Sandbox Reviewer Account',
   type: 'mock',
   async connect() {
@@ -57,16 +57,21 @@ export const sandboxConnector = createConnector((config) => ({
   onDisconnect() {},
 }));
 
-export const config = createConfig({
-  chains: [mainnet, sepolia, base, arbitrum],
-  connectors: [
-    injected(),
-    sandboxConnector,
-  ],
+export const config = getDefaultConfig({
+  appName: 'Vernier',
+  projectId: '94e24ef5476d05f32a74c4dbb7b39f1c',
+  chains: [sepolia, mainnet, base, arbitrum],
   transports: {
-    [mainnet.id]: http('https://ethereum-rpc.publicnode.com'),
     [sepolia.id]: http('https://ethereum-sepolia-rpc.publicnode.com'),
+    [mainnet.id]: http('https://ethereum-rpc.publicnode.com'),
     [base.id]: http('https://base-rpc.publicnode.com'),
     [arbitrum.id]: http('https://arbitrum-one-rpc.publicnode.com'),
   },
+  ssr: true,
 });
+
+try {
+  (config.connectors as any).push((sandboxConnector as any)({}));
+} catch (e) {
+  // Graceful fallback
+}

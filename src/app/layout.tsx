@@ -3,10 +3,10 @@ import './globals.css';
 import { Web3Provider } from '../components/providers/Web3Provider';
 
 export const metadata: Metadata = {
-  title: 'Vernier — EVM Transaction Intent Firewall & Pre-Execution Simulation Sandbox',
+  title: 'Vernier | EVM Transaction Intent Firewall & Pre-Execution Simulation Sandbox',
   description: 'Measure state deltas before your wallet signs. Real-time EVM pre-execution simulation sandbox and storage slot intent firewall.',
   openGraph: {
-    title: 'Vernier — EVM Transaction Intent Firewall',
+    title: 'Vernier | EVM Transaction Intent Firewall',
     description: 'Measure state deltas before your wallet signs. Real-time EVM pre-execution simulation sandbox.',
     url: 'https://tryvernier.netlify.app',
     siteName: 'Vernier',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Vernier — EVM Transaction Intent Firewall',
+    title: 'Vernier | EVM Transaction Intent Firewall',
     description: 'Stop signing transactions blind. Vernier simulates the damage first in 0.42ms.',
   },
   icons: {

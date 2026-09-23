@@ -8,8 +8,12 @@ out
 # Local Netlify folder
 .netlify
 
-# Demo raw takes
+# Demo raw takes & video renders
 demo/takes/
 demo/beats/*.mp3
 demo/beats/*.wav
 demo/*.wav
+videos/**/*.wav
+videos/**/*.mp4
+*.wav
+*.mp4
