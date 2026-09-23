@@ -6,7 +6,7 @@ import { Button, Badge, TabsList, TabsTrigger } from '../ui';
 
 import { ConnectWalletButton } from './ConnectWalletButton';
 
-export type SurfaceTab = 'overview' | 'cockpit' | 'proof';
+export type SurfaceTab = 'overview' | 'cockpit' | 'proof' | 'deck';
 
 interface ChromeHeaderProps {
   activeTab: SurfaceTab;
@@ -66,6 +66,13 @@ export const ChromeHeader: React.FC<ChromeHeaderProps> = ({
             onClick={() => onTabChange('proof')}
           >
             Proof
+          </TabsTrigger>
+
+          <TabsTrigger
+            active={activeTab === 'deck'}
+            onClick={() => onTabChange('deck')}
+          >
+            Deck
           </TabsTrigger>
         </TabsList>
 

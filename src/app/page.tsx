@@ -5,6 +5,7 @@ import { ChromeHeader, SurfaceTab } from '../components/navigation/ChromeHeader'
 import { Surface1FrontDoor } from '../components/surfaces/Surface1FrontDoor';
 import { Surface2Cockpit } from '../components/surfaces/Surface2Cockpit';
 import { Surface3ProofRail } from '../components/surfaces/Surface3ProofRail';
+import { Surface4PitchDeck } from '../components/surfaces/Surface4PitchDeck';
 import { SCENARIOS } from '../data/attack-vectors';
 
 export default function VernierApp() {
@@ -17,7 +18,7 @@ export default function VernierApp() {
     const handleHashSync = () => {
       if (typeof window !== 'undefined') {
         const hash = window.location.hash.replace('#', '') as SurfaceTab;
-        if (hash === 'overview' || hash === 'cockpit' || hash === 'proof') {
+        if (hash === 'overview' || hash === 'cockpit' || hash === 'proof' || hash === 'deck') {
           setActiveTab(hash);
         }
       }
@@ -71,6 +72,11 @@ export default function VernierApp() {
           onSelectScenario={setSelectedScenarioId}
           onNavigateTab={handleTabChange}
         />
+      )}
+
+      {/* Surface 4: Pitch Deck Presentation */}
+      {activeTab === 'deck' && (
+        <Surface4PitchDeck />
       )}
     </main>
   );
