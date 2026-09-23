@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
 import { formatUnits } from 'viem';
-import { Sparkles, Wallet, ChevronDown, Check, Copy, LogOut, ShieldCheck } from 'lucide-react';
+import { Wallet, ChevronDown, Check, Copy, LogOut, ShieldCheck } from 'lucide-react';
 
 const SANDBOX_ADDRESS = '0x4E6b21703E9B01c7811985a109867c4FA6712AB9' as const;
 
@@ -27,15 +27,27 @@ export const ConnectWalletButton: React.FC = () => {
     }
   }, []);
 
-  const handleConnectSandbox = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('vernier_sandbox_connected', 'true');
+  const handleConnectClick = async (openConnectModal?: () => void) => {
+    // 1. If browser extension (MetaMask, Rabby, Coinbase, etc.) is detected, prompt it directly just like a real dApp
+    if (typeof window !== 'undefined' && (window as any).ethereum) {
+      try {
+        const injected = connectors.find((c) => c.id === 'injected' || c.type === 'injected') || connectors[0];
+        if (injected) {
+          connect({ connector: injected });
+          return;
+        }
+        await (window as any).ethereum.request({ method: 'eth_requestAccounts' });
+        return;
+      } catch (err: any) {
+        // If user closes or extension error, fallback to RainbowKit modal
+        if (openConnectModal) openConnectModal();
+        return;
+      }
     }
-    setSandboxActive(true);
-    const sandbox = connectors.find((c) => c.id === 'sandbox' || c.name === 'Sandbox Reviewer Account');
-    if (sandbox) {
-      connect({ connector: sandbox });
+
+    // 2. Otherwise open RainbowKit modal popup (for WalletConnect, QR codes, mobile)
+    if (openConnectModal) {
+      openConnectModal();
     }
   };
 
@@ -81,27 +93,16 @@ export const ConnectWalletButton: React.FC = () => {
 
         if (!isUserConnected || !effectiveAddress) {
           return (
-            <div className="flex items-center gap-1.5">
-              {/* Primary: Real Wallet Popup (RainbowKit Modal with MetaMask, Rabby, Coinbase, WalletConnect) */}
+            <div className="flex items-center">
+              {/* Single standard Web3 Connect Button: triggers browser wallet popup directly if present, or RainbowKit modal */}
               <button
                 type="button"
-                onClick={openConnectModal}
+                onClick={() => handleConnectClick(openConnectModal)}
                 className="group relative flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-medium rounded-lg border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-slate-900/80 to-slate-950/90 text-slate-100 hover:text-white hover:border-emerald-400 shadow-[0_0_15px_-3px_rgba(16,185,129,0.2)] transition-all cursor-pointer active:scale-95"
               >
                 <div className="size-2 rounded-full bg-emerald-400 animate-pulse" />
                 <Wallet className="size-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
                 <span>Connect Wallet</span>
-              </button>
-
-              {/* Fast-Pass Sandbox Button for Judges who want 1-click test session */}
-              <button
-                type="button"
-                onClick={handleConnectSandbox}
-                title="Instant Judge Sandbox Pass (2.35 ETH pre-funded on Sepolia)"
-                className="hidden md:flex items-center gap-1 px-2 py-1.5 text-[11px] font-mono rounded-lg border border-cyan-500/30 bg-cyan-950/20 text-cyan-300 hover:bg-cyan-950/50 hover:border-cyan-400/60 transition-all cursor-pointer"
-              >
-                <Sparkles className="size-3 text-cyan-400" />
-                <span>Sandbox Pass</span>
               </button>
             </div>
           );
