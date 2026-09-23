@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAccount, useBalance } from 'wagmi';
-import { formatUnits } from 'viem';
+import { useAccount, useBalance, useSignTypedData } from 'wagmi';
+import { formatUnits, isAddress, getAddress } from 'viem';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -16,6 +16,7 @@ import {
   ArrowRight,
   ExternalLink,
   Wallet,
+  Lock,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -37,20 +38,25 @@ interface LiveSimResult {
 const PRESET_TARGETS = [
   { name: 'USDC (Ethereum)', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', type: 'safe' },
   { name: 'Permit2 Canonical', address: '0x000000000022D473030F116dDEE9F6B43aC78BA3', type: 'safe' },
-  { name: 'Fake PhishDrop v2', address: '0xDA9b8a36b3F8120eEc914361520Ab1E19Ee6b3', type: 'phishing' },
-  { name: 'Unverified Proxy Hijacker', address: '0x71C836d2c4F2a36b3F8120eEc914361520Ab1E19', type: 'hijack' },
+  { name: 'Fake PhishDrop v2', address: '0xdA9B8A36b3f8120eeC914361520AB1e19eE6b32A', type: 'phishing' },
+  { name: 'Unverified Proxy Hijacker', address: '0x71c836d2c4f2A36B3F8120eec914361520Ab1E19', type: 'hijack' },
 ];
 
 export const LiveCustomCaliper: React.FC = () => {
   const { address, isConnected, chain } = useAccount();
   const { data: balance } = useBalance({ address });
+  const { signTypedDataAsync, isPending: isSigning } = useSignTypedData();
 
-  const [targetAddress, setTargetAddress] = useState('0xDA9b8a36b3F8120eEc914361520Ab1E19Ee6b3');
+  const [signatureResult, setSignatureResult] = useState<string | null>(null);
+  const [signError, setSignError] = useState<string | null>(null);
+  const [signatureCopied, setSignatureCopied] = useState(false);
+
+  const [targetAddress, setTargetAddress] = useState('0xdA9B8A36b3f8120eeC914361520AB1e19eE6b32A');
   const [selectedPattern, setSelectedPattern] = useState<'phish' | 'hijack' | 'safe'>('phish');
   const [customCalldata, setCustomCalldata] = useState('0x23b872dd0000000000000000000000004e6b21703e9b01c7811985a109867c4fa6712ab9ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
   const [isSimulating, setIsSimulating] = useState(false);
   const [simResult, setSimResult] = useState<LiveSimResult | null>({
-    target: '0xDA9b8a36b3F8120eEc914361520Ab1E19Ee6b3',
+    target: '0xdA9B8A36b3f8120eeC914361520AB1e19eE6b32A',
     isThreat: true,
     threatType: 'Unbounded Token Allowance (Permit2 Drainer)',
     gasSimulated: 184500,
@@ -62,6 +68,49 @@ export const LiveCustomCaliper: React.FC = () => {
     stateRoot: '0x9f3e481b7a2d48041c2c31e428c0b5f54316d9bb8283a0098df2410a7a28e5c1',
   });
   const [copied, setCopied] = useState(false);
+
+  const handleSignAttestation = async () => {
+    if (!isConnected || !address || !simResult) return;
+    setSignError(null);
+    setSignatureResult(null);
+    try {
+      const validTarget = isAddress(targetAddress)
+        ? getAddress(targetAddress)
+        : ('0xdA9B8A36b3f8120eeC914361520AB1e19eE6b32A' as `0x${string}`);
+      
+      const sig = await signTypedDataAsync({
+        domain: {
+          name: 'Vernier Firewall',
+          version: '1.8',
+          chainId: chain?.id ? BigInt(chain.id) : BigInt(1),
+          verifyingContract: validTarget,
+        },
+        types: {
+          VernierSecurityProof: [
+            { name: 'sender', type: 'address' },
+            { name: 'target', type: 'address' },
+            { name: 'gasSimulated', type: 'uint256' },
+            { name: 'stateRoot', type: 'bytes32' },
+            { name: 'verdict', type: 'string' },
+          ],
+        },
+        primaryType: 'VernierSecurityProof',
+        message: {
+          sender: isAddress(address) ? getAddress(address) : ('0x4E6b21703E9B01c7811985a109867c4FA6712AB9' as `0x${string}`),
+          target: validTarget,
+          gasSimulated: BigInt(simResult.gasSimulated),
+          stateRoot: (simResult.stateRoot.startsWith('0x') && simResult.stateRoot.length === 66
+            ? simResult.stateRoot
+            : '0x9f3e481b7a2d48041c2c31e428c0b5f54316d9bb8283a0098df2410a7a28e5c1') as `0x${string}`,
+          verdict: simResult.verdict,
+        },
+      });
+      setSignatureResult(sig);
+    } catch (err: any) {
+      console.warn('Wallet signing error/rejection:', err);
+      setSignError(err?.shortMessage || err?.message || 'Signature rejected or aborted by user');
+    }
+  };
 
   const handleSelectPreset = (addr: string, type: string) => {
     setTargetAddress(addr);
@@ -342,6 +391,56 @@ export const LiveCustomCaliper: React.FC = () => {
                     {simResult.stateRoot}
                   </div>
                 </div>
+
+                {/* Real Wallet Signing Intercept CTA */}
+                {isConnected && address && (
+                  <div className="pt-2.5 border-t border-slate-800 space-y-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSignAttestation}
+                      disabled={isSigning}
+                      className="w-full text-xs font-mono justify-center border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-200 transition-all"
+                      leftIcon={<Lock className={`size-3 text-cyan-400 ${isSigning ? 'animate-spin' : ''}`} />}
+                    >
+                      {isSigning ? 'Requesting Wallet Signature...' : 'Test Wallet EIP-712 Signature'}
+                    </Button>
+
+                    {signatureResult && (
+                      <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/60 text-[11px] text-emerald-300 font-mono space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="flex items-center gap-1.5 font-semibold text-emerald-400">
+                            <Check className="size-3.5" />
+                            <span>Wallet Attestation Verified</span>
+                          </span>
+                          <button
+                            onClick={() => {
+                              if (typeof navigator !== 'undefined') {
+                                navigator.clipboard.writeText(signatureResult);
+                                setSignatureCopied(true);
+                                setTimeout(() => setSignatureCopied(false), 2000);
+                              }
+                            }}
+                            className="text-[10px] text-emerald-400 hover:text-white flex items-center gap-1"
+                          >
+                            {signatureCopied ? <Check className="size-3" /> : <Copy className="size-3" />}
+                            <span>{signatureCopied ? 'Copied' : 'Copy'}</span>
+                          </button>
+                        </div>
+                        <div className="text-[10px] text-emerald-400/80 truncate bg-black/40 p-1.5 rounded font-mono">
+                          {signatureResult}
+                        </div>
+                      </div>
+                    )}
+
+                    {signError && (
+                      <div className="p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-300 font-mono flex items-center gap-1.5">
+                        <AlertTriangle className="size-3.5 shrink-0" />
+                        <span className="truncate">{signError}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ) : (
               <div className="py-8 text-center text-slate-500 text-xs">

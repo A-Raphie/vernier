@@ -21,7 +21,7 @@ export function AutoReconnect() {
         const accts = await eth.request({ method: 'eth_accounts' });
         if (dead || !accts?.length) return;
         reconnect();
-        const connector = connectors.find((c) => c.id === 'injected') || connectors[0];
+        const connector = connectors.find((c) => c.id === 'injected');
         if (connector) await connect({ connector });
       } catch {
         /* wallet not granting yet */
