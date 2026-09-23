@@ -1,0 +1,6 @@
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene1.mp4'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene2.mp4'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene3.mp4'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene4.mp4'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene5.mp4'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/takes/scene6.mp4'

@@ -1,0 +1,6 @@
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-01.wav'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-02.wav'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-03.wav'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-04.wav'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-05.wav'
+file '/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-06.wav'

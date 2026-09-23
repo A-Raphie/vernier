@@ -1,0 +1,47 @@
+{
+  "total_duration": 110.556668,
+  "beats": [
+    {
+      "id": 1,
+      "name": "beat-01",
+      "duration": 15.426375,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-01.wav",
+      "text": "Every day, millions of dollars are drained in Web three because wallets force users to sign completely blind. MetaMask shows you an unreadable hash, while phishing drainers steal everything. What if you could see the exact damage before you sign?"
+    },
+    {
+      "id": 2,
+      "name": "beat-02",
+      "duration": 19.318625,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-02.wav",
+      "text": "Meet Vernier, the zero point four two millisecond Web three transaction firewall. Built around the precision caliper principle, Vernier measures contract bytecode and storage mutations down to the single gas unit. Red means halt, green means safe. Anyone understands it in five seconds."
+    },
+    {
+      "id": 3,
+      "name": "beat-03",
+      "duration": 18.717813,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-03.wav",
+      "text": "Inside the working cockpit, Vernier runs full client-side EVM emulation. When a malicious airdrop attempts an unbounded token approval, Vernier intercepts the hazard instantly. Zero RPC leakage, zero third-party latency. Your private keys never touch the network unprotected."
+    },
+    {
+      "id": 4,
+      "name": "beat-04",
+      "duration": 19.397,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-04.wav",
+      "text": "Vernier is not a static mockup. With real Web three wallet integration via Wagmi and Viem, you can connect your wallet and benchmark custom contracts in real time. Our live caliper calculates gas discrepancies, storage slot mutations, and verifies contract state roots in under one millisecond."
+    },
+    {
+      "id": 5,
+      "name": "beat-05",
+      "duration": 21.277813,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-05.wav",
+      "text": "Every simulated execution generates an immutable cryptographic receipt. Judges, dapps, and smart contract auditors can independently verify state deltas, gas discrepancies, and threat hashes with mathematical certainty. Security is no longer a promise; it is verifiable on-chain evidence."
+    },
+    {
+      "id": 6,
+      "name": "beat-06",
+      "duration": 16.419042,
+      "wav": "/Users/raphie/Documents/Hackathons/vernier/demo/beats/beat-06.wav",
+      "text": "We have also built our complete six-slide pitch deck directly into the application. Vernier is ready to deploy as a lightweight browser extension and an ERC forty-three thirty-seven account abstraction plugin. Stop blind signing. Protect your keys with Vernier."
+    }
+  ]
+}

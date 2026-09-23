@@ -7,3 +7,9 @@ out
 
 # Local Netlify folder
 .netlify
+
+# Demo raw takes
+demo/takes/
+demo/beats/*.mp3
+demo/beats/*.wav
+demo/*.wav

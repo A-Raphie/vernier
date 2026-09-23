@@ -1,0 +1,13 @@
+{
+  "voDir": "/Users/raphie/Documents/Hackathons/vernier/demo/beats",
+  "outDir": "/Users/raphie/Documents/Hackathons/vernier/demo/takes",
+  "final": "/Users/raphie/Documents/Hackathons/vernier/demo/vernier-demo-final.mp4",
+  "tails": {
+    "1": 0.65,
+    "2": 0.65,
+    "3": 0.65,
+    "4": 0.65,
+    "5": 0.65,
+    "6": 1.50
+  }
+}

@@ -2,7 +2,7 @@
 
 Stop signing transactions blind: Vernier simulates EVM bytecode and catches malicious wallet drainers before your wallet signs.
 
-[Live App](https://tryvernier.netlify.app) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Architecture](#how-it-works)
+[Live App](https://tryvernier.netlify.app) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Pitch Deck](https://tryvernier.netlify.app/#deck) · [Demo Video (115s)](https://tryvernier.netlify.app/vernier-demo-final.mp4) · [Architecture](#how-it-works)
 
 Every year, $142,000,000+ is drained from Web3 users and treasuries because scam websites disguise wallet drainers behind innocent buttons like "Claim Airdrop". Wallets only display unreadable hexadecimal calldata. Vernier executes the calldata in a private 0.42ms browser sandbox to verify what actually leaves your wallet before you press Confirm.
 
