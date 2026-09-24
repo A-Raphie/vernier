@@ -8,7 +8,7 @@ Never get drained: Vernier executes transaction bytecode in a 0.42ms client sand
 [![Wallet](https://img.shields.io/badge/Wallet-RainbowKit_%7C_MetaMask_%7C_Rabby-6366f1?style=flat-square)](https://www.rainbowkit.com)
 [![License](https://img.shields.io/badge/License-MIT-slate?style=flat-square)](LICENSE)
 
-[Live App](https://tryvernier.netlify.app) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Pitch Deck](https://tryvernier.netlify.app/#deck) · [Architecture](#how-it-works)
+[Live App](https://tryvernier.netlify.app) · [Demo Video](https://tryvernier.netlify.app/vernier-demo-showcase.mp4) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Pitch Deck](https://tryvernier.netlify.app/#deck) · [Architecture](#how-it-works)
 
 Every year, \$142,000,000+ is stolen from Web3 wallets because scam websites disguise drainers behind innocent buttons like "Claim Airdrop". Wallets display unreadable hexadecimal calldata and blind hash prompts. Vernier simulates transaction bytecode inside a private 0.42ms browser sandbox to verify what actually leaves your wallet before you press Confirm.
 
@@ -87,12 +87,12 @@ if (verdict.isThreat) throw new Error(`Blocked by Vernier: ${verdict.threatType}
 | Chapter | Time | Beat | Description |
 |---|---|---|---|
 | 1 | 0:00 | The Hook | \$142M drained yearly by blind signing innocent-looking buttons |
-| 2 | 0:18 | 5-Second Traffic Light | 3-second visual contrast: what was promised vs what leaves the wallet |
-| 3 | 0:42 | Live Wallet & RainbowKit | Instant wallet connection and real-time transaction interception |
-| 4 | 1:04 | Storage Metrology | Reading SSTORE slot mutations and opcode disassembly traces |
-| 5 | 1:26 | Pre-Flight Simulation | 0.42ms local execution and EIP-712 typed cryptographic attestation |
-| 6 | 1:44 | Cryptographic Proof Rail | Machine-readable receipt, SHA-256 state root, and JSON export |
-| 7 | 1:52 | Summary & Action | Live production URL and hackathon evaluation links |
+| 2 | 0:24 | 5-Second Traffic Light | 3-second visual contrast: what was promised vs what leaves the wallet |
+| 3 | 0:50 | Live Rabby Wallet Flow | Real Rabby extension popup, risk alert bypass, and in-place account binding |
+| 4 | 1:13 | Storage Metrology | Reading SSTORE slot mutations and opcode disassembly traces |
+| 5 | 1:44 | Dual-Chain Signing | EIP-712 typed data signing and cryptographic attestation proof |
+| 6 | 2:12 | Cryptographic Proof Rail | Machine-readable receipt, SHA-256 state root, and JSON export |
+| 7 | 2:34 | Pitch Deck & Architecture | Live production URL, GitHub repo, and hackathon evaluation links |
 
 ## Run locally
 

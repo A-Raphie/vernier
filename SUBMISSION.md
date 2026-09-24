@@ -70,5 +70,5 @@ The greatest vulnerability in Web3 is not smart contract code: it is human cogni
 - **Interactive Cockpit**: [https://tryvernier.netlify.app/#cockpit](https://tryvernier.netlify.app/#cockpit)
 - **Cryptographic Proof Rail**: [https://tryvernier.netlify.app/#proof](https://tryvernier.netlify.app/#proof)
 - **Interactive Pitch Deck**: [https://tryvernier.netlify.app/#deck](https://tryvernier.netlify.app/#deck)
-- **Official Demo Video (115s)**: [https://tryvernier.netlify.app/vernier-demo-final.mp4](https://tryvernier.netlify.app/vernier-demo-final.mp4)
+- **Official Demo Video (164.7s Master Cut)**: [https://tryvernier.netlify.app/vernier-demo-showcase.mp4](https://tryvernier.netlify.app/vernier-demo-showcase.mp4)
 - **GitHub Repository**: [https://github.com/A-Raphie/vernier](https://github.com/A-Raphie/vernier)
