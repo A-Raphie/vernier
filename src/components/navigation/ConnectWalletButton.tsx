@@ -112,9 +112,9 @@ export const ConnectWalletButton: React.FC = () => {
 
         const displayBal = account?.displayBalance
           ? account.displayBalance
-          : balance
-          ? `${parseFloat(formatUnits(balance.value, balance.decimals)).toFixed(3)} ${balance.symbol}`
-          : '2.350 ETH';
+          : balance && balance.value !== undefined && !Number.isNaN(Number(formatUnits(balance.value, balance.decimals || 18)))
+          ? `${Number(formatUnits(balance.value, balance.decimals || 18)).toFixed(3)} ${balance.symbol || 'ETH'}`
+          : '0.000 ETH';
 
         return (
           <div className="relative flex items-center gap-1.5 font-mono">
