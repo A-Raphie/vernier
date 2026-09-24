@@ -8,7 +8,7 @@ Never get drained: Vernier executes transaction bytecode in a 0.42ms client sand
 [![Wallet](https://img.shields.io/badge/Wallet-RainbowKit_%7C_MetaMask_%7C_Rabby-6366f1?style=flat-square)](https://www.rainbowkit.com)
 [![License](https://img.shields.io/badge/License-MIT-slate?style=flat-square)](LICENSE)
 
-[Live App](https://tryvernier.netlify.app) · [Demo Video](https://tryvernier.netlify.app/vernier-demo-showcase.mp4) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Pitch Deck](https://tryvernier.netlify.app/#deck) · [Architecture](#how-it-works)
+[Live App](https://tryvernier.netlify.app) · [Demo Video](https://vimeo.com/1230050623) · [Interactive Cockpit](https://tryvernier.netlify.app/#cockpit) · [Attestation Proof](https://tryvernier.netlify.app/#proof) · [Pitch Deck](https://tryvernier.netlify.app/#deck) · [Architecture](#how-it-works)
 
 Every year, \$142,000,000+ is stolen from Web3 wallets because scam websites disguise drainers behind innocent buttons like "Claim Airdrop". Wallets display unreadable hexadecimal calldata and blind hash prompts. Vernier simulates transaction bytecode inside a private 0.42ms browser sandbox to verify what actually leaves your wallet before you press Confirm.
 
