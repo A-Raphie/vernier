@@ -21,10 +21,19 @@ export const ConnectWalletButton: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('vernier_sandbox_connected') === 'true';
-      if (stored) setSandboxActive(true);
-    }
+    const updateSandbox = () => {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('vernier_sandbox_connected') === 'true';
+        setSandboxActive(stored);
+      }
+    };
+    updateSandbox();
+    window.addEventListener('storage', updateSandbox);
+    window.addEventListener('vernier:connect', updateSandbox);
+    return () => {
+      window.removeEventListener('storage', updateSandbox);
+      window.removeEventListener('vernier:connect', updateSandbox);
+    };
   }, []);
 
   const handleConnectClick = async (openConnectModal?: () => void) => {
